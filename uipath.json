@@ -1,0 +1,8 @@
+{
+  "scope": "",
+  "clientId": "a1147b8f-8a58-407f-a59b-4c875117e4a6",
+  "orgName": "uipathlabs",
+  "tenantName": "Playground",
+  "baseUrl": "https://staging.api.uipath.com",
+  "redirectUri": "http://localhost:5173"
+}
