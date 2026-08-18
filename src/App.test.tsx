@@ -23,7 +23,8 @@ describe('Agentic Redaction Workshop', () => {
     renderApp()
 
     expect(screen.getAllByAltText('UiPath logo')).not.toHaveLength(0)
-    expect(screen.getAllByAltText('Defense Contract Management Agency logo')).not.toHaveLength(0)
+    expect(screen.getAllByAltText('FMS-3: AI and Analytics logo')).not.toHaveLength(0)
+    expect(screen.getAllByText('FMS-3: AI and Analytics')).not.toHaveLength(0)
     expect(screen.queryByRole('img', { name: 'Customer logo placeholder' })).not.toBeInTheDocument()
     expect(screen.getByText('Hosted by the UiPath SE Team')).toBeInTheDocument()
     expect(

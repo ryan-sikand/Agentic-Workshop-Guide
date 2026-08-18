@@ -65,6 +65,14 @@ code:not(pre code) {
   filter: invert(1);
 }
 
+/* Customer wordmark: FMS-3 brand guidance calls for Arial Narrow Bold. */
+.customer-wordmark {
+  font-family: "Arial Narrow", "Liberation Sans Narrow", Arial, Helvetica, sans-serif;
+  font-stretch: condensed;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     scroll-behavior: auto;

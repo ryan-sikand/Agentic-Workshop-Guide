@@ -71,6 +71,7 @@ const workshopJoinUrl = 'https://uipathlabs.uipath.com/join/KJ8ARRBU'
 
 function BrandLockup({ compact = false }: { compact?: boolean }) {
   const customerLogo = workshopBranding.customer.logoSrc
+  const customerWordmark = workshopBranding.customer.wordmark
 
   return (
     <div
@@ -88,14 +89,23 @@ function BrandLockup({ compact = false }: { compact?: boolean }) {
       {customerLogo ? (
         <div
           className={`flex items-center justify-center rounded-md bg-white px-2 py-1 shadow-sm ring-1 ring-black/10 ${
-            compact ? 'h-11 w-28' : 'h-16 w-40'
+            compact ? 'h-11 gap-1.5' : 'h-16 gap-2.5'
           }`}
         >
           <img
             alt={`${workshopBranding.customer.name} logo`}
-            className="max-h-full max-w-full object-contain"
+            className="h-full w-auto max-w-full object-contain"
             src={customerLogo}
           />
+          {customerWordmark ? (
+            <span
+              className={`customer-wordmark leading-tight text-[#0b3b8c] ${
+                compact ? 'max-w-24 text-[11px]' : 'max-w-32 text-sm'
+              }`}
+            >
+              {customerWordmark}
+            </span>
+          ) : null}
         </div>
       ) : (
         <div
