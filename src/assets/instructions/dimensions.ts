@@ -1,0 +1,40 @@
+// Generated from the PNG headers so lazily loaded screenshots reserve their space.
+// Without an intrinsic size the page collapses to nothing, then grows as images
+// arrive, which lands jump-to-section navigation in the wrong place.
+// Regenerate with scratchpad tooling after adding or replacing a screenshot.
+
+export const screenshotDimensions: Record<string, [number, number]> = {
+  "01-waffle-document-understanding.png": [1280, 688],
+  "02-du-project-fms-training.png": [1280, 688],
+  "03-build-annotate-83-documents.png": [1280, 688],
+  "04-continuation-page-fields.png": [1280, 688],
+  "05-document-type-manager.png": [1280, 688],
+  "06-measure-metrics.png": [1280, 688],
+  "07-project-versions-open-studio-web.png": [1280, 688],
+  "08-retrieve-sample-files.png": [1280, 688],
+  "09-download-sample-file-shared.png": [1280, 688],
+  "10-acknowledge-banner.png": [1280, 688],
+  "11-extract-and-validate-activities.png": [1280, 688],
+  "12-add-create-validation-task.png": [1280, 688],
+  "13-create-validation-task-document-data.png": [1280, 688],
+  "14-assign-tasks-task-id.png": [1280, 688],
+  "15-activity-stack-no-wait.png": [1280, 688],
+  "16-both-activities-configured.png": [1280, 688],
+  "17-waffle-actions.png": [1280, 688],
+  "18-action-center-overview.png": [1280, 688],
+  "19-action-center-inbox-four-tasks.png": [1280, 688],
+  "20-build-document-type-menu.png": [1280, 688],
+  "agent-test-input.png": [1280, 527],
+  "agent-test-resources.png": [1280, 312],
+  "data-manager-inputs.png": [327, 218],
+  "data-manager.png": [428, 627],
+  "orchestrator-path.png": [1280, 494],
+  "pii-agent-config.png": [1280, 594],
+  "process-test-input.png": [1280, 251],
+  "process-test-run.png": [1280, 774],
+  "project-rename.png": [577, 585],
+  "review-app.png": [687, 688],
+  "storage-bucket.png": [1257, 413],
+  "workflow-action-app.png": [1280, 1046],
+  "workflow-name-variable.png": [1280, 451],
+}

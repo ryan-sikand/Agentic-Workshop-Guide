@@ -39,3 +39,11 @@ Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
   configurable: true,
   value: () => undefined,
 })
+
+// jsdom has no scrollTo, and the completion flow calls it to bring a collapsed
+// step's header back into view.
+Object.defineProperty(window, 'scrollTo', {
+  configurable: true,
+  writable: true,
+  value: () => undefined,
+})
