@@ -108,6 +108,7 @@ import {
   autopilotPrompt,
   categoryExemptionMap,
   findingClassificationSection,
+  foiaPipeline,
   identityRows,
   progressSections,
   recipientEmailsExample,
@@ -1362,32 +1363,6 @@ export default function App() {
                     </p>
                   </AlertDescription>
                 </Alert>
-                <div className="rounded-2xl border bg-muted/20 p-5 sm:p-6">
-                  <Badge className="mb-3" variant="secondary">Part 2 reference</Badge>
-                  <h3 className="text-lg font-semibold">The FOIA Reading Room</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Every document Part 2 can redact lives in the Reading Room. It is the sample document
-                    repository the workflow searches - open it and browse before you run anything, so you know
-                    what is actually in there.
-                  </p>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    In Part 2 you supply a <code>documentSearchTerm</code>. That term is matched against both the
-                    <strong className="text-foreground"> file name</strong> and the
-                    <strong className="text-foreground"> document contents</strong>, so a word that appears only
-                    inside a document still finds it. A term that matches nothing in the Reading Room returns no
-                    documents and the run ends early, so check here first rather than guessing.
-                  </p>
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <Button asChild size="sm" variant="outline">
-                      <a href={readingRoomUrl} rel="noreferrer" target="_blank">
-                        Open the FOIA Reading Room <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    </Button>
-                    <span className="text-sm text-muted-foreground">
-                      Part 2 uses <code>geothermal</code>, which matches one document with three findings.
-                    </span>
-                  </div>
-                </div>
                 <div>
                   <h3 className="mb-4 font-semibold">What you will build</h3>
                   <div className="space-y-5">
@@ -1506,6 +1481,77 @@ export default function App() {
                     for you to fill.
                   </AlertDescription>
                 </Alert>
+              </WorkshopCard>
+            )}
+
+            {visibleIds.has('foia-overview') && (
+              <WorkshopCard section={sectionById('foia-overview')}>
+                <p className="leading-7">
+                  A Freedom of Information Act request obliges an agency to release its records, but not the parts
+                  of them that law protects - trade secrets, pre-decisional advice, personal privacy, and several
+                  other categories. Someone has to read every page, decide what must be withheld, cite the
+                  statutory exemption that justifies each decision, and produce a copy with those passages
+                  blacked out. It is slow, and it carries legal consequences when it goes wrong.
+                </p>
+                <p className="leading-7">
+                  Part 2 hands you that process already built as a Maestro workflow, with an agent doing the
+                  reading and a person keeping the decisions.
+                </p>
+                <div>
+                  <h3 className="mb-3 font-semibold">What the workflow does</h3>
+                  <div className="overflow-hidden rounded-xl border">
+                    {foiaPipeline.map((row, index) => (
+                      <div
+                        className={`flex gap-4 p-4 ${index % 2 === 1 ? 'bg-muted/25' : ''}`}
+                        key={row.stage}
+                      >
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-semibold">{row.stage}</p>
+                          <p className="mt-1 text-sm leading-6 text-muted-foreground">{row.detail}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <Alert>
+                  <FileCheck2 className="h-4 w-4" />
+                  <AlertTitle>What you will actually change</AlertTitle>
+                  <AlertDescription className="mt-1 leading-6">
+                    Only three things are missing from the template, and you will fill them in that order: who the
+                    review tasks go to, the policy source the agent reasons from, and the vocabulary it labels
+                    findings with. Then you run the same document twice - once before those last two are in place
+                    and once after - so the difference is something you see rather than something you are told.
+                  </AlertDescription>
+                </Alert>
+                <div className="rounded-2xl border bg-muted/20 p-5 sm:p-6">
+                  <Badge className="mb-3" variant="secondary">Sample documents</Badge>
+                  <h3 className="text-lg font-semibold">The FOIA Reading Room</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Every document this workflow can redact lives in the Reading Room. It is the sample document
+                    repository step 1 of the pipeline searches - open it and browse before you run anything, so you
+                    know what is actually in there.
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    You supply a <code>documentSearchTerm</code> when you run the process. That term is matched
+                    against both the <strong className="text-foreground">file name</strong> and the
+                    <strong className="text-foreground"> document contents</strong>, so a word that appears only
+                    inside a document still finds it. A term that matches nothing in the Reading Room returns no
+                    documents and the run ends early, so check here first rather than guessing.
+                  </p>
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <Button asChild size="sm" variant="outline">
+                      <a href={readingRoomUrl} rel="noreferrer" target="_blank">
+                        Open the FOIA Reading Room <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      This workshop uses <code>geothermal</code>, which matches one document with three findings.
+                    </span>
+                  </div>
+                </div>
               </WorkshopCard>
             )}
 

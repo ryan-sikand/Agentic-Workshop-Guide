@@ -12,6 +12,7 @@ export type WorkshopSection = {
   group:
     | 'Start here'
     | 'Extract the data'
+    | 'Orientation'
     | 'Set up the solution'
     | 'Run it by hand'
     | 'Teach the agent'
@@ -78,6 +79,17 @@ export const workshopSections: WorkshopSection[] = [
     group: 'Extract the data',
     brandIcon: brandIcons.tasks,
     searchTerms: 'debug on cloud run output action center actions inbox pending unassigned submit four documents',
+  },
+  {
+    id: 'foia-overview',
+    part: 'FOIA redaction',
+    title: 'FOIA overview',
+    shortTitle: 'FOIA overview',
+    description: 'What the workflow does, and what you will change about it.',
+    duration: '4 min',
+    group: 'Orientation',
+    brandIcon: brandIcons.overview,
+    searchTerms: 'foia freedom of information act exemption withholding overview pipeline search analyze localize review redact deliver reading room sample documents documentSearchTerm file name contents what you will build',
   },
   {
     id: 'project-setup',
@@ -185,6 +197,40 @@ export const totalDurationMinutes =
     workshopSections.reduce((total, section) => total + (Number.parseInt(section.duration, 10) || 0), 0) / 5,
   ) * 5
 
+// The BPMN has far more nodes than this, but these are the six an attendee can
+// see the effect of. Kept in the order the process runs them.
+export const foiaPipeline: { stage: string; detail: string }[] = [
+  {
+    stage: 'Search',
+    detail:
+      'An automation searches the document repository for records matching the search term you supply.',
+  },
+  {
+    stage: 'Analyze',
+    detail:
+      'An agent reads each document and proposes which passages should be withheld, with a rationale for each one.',
+  },
+  {
+    stage: 'Localize',
+    detail:
+      'Each proposed passage is matched back to its exact position on the page, so a redaction can be placed on it.',
+  },
+  {
+    stage: 'Review',
+    detail:
+      'A person checks every proposed finding, assigns the statutory exemption that justifies withholding it, and approves or rejects.',
+  },
+  {
+    stage: 'Redact',
+    detail:
+      'The approved redactions are burned into the PDF and then independently verified against the original.',
+  },
+  {
+    stage: 'Deliver',
+    detail: 'The redacted package is emailed to the requester, with the exemption code printed on every bar.',
+  },
+]
+
 export const autopilotPrompt = `Add a section to the system prompt called Finding Classification. Require every finding to use exactly one category from this list: Commercial, Deliberative, Personal, Law Enforcement, Geological, Other. Define each briefly in FOIA terms. Require the exact label only, with no extra words - the reasoning belongs in rationale, not category.`
 
 // Fallback for a stuck attendee, and the answer key for the instructor. This is
@@ -249,6 +295,7 @@ export const solutionResourceRows: { kind: string; resource: string }[] = [
 export const groups = [
   'Start here',
   'Extract the data',
+  'Orientation',
   'Set up the solution',
   'Run it by hand',
   'Teach the agent',
@@ -262,7 +309,7 @@ export const workshopParts: { title: WorkshopPart | null; groups: readonly (type
   { title: 'Document Understanding', groups: ['Extract the data'] },
   {
     title: 'FOIA redaction',
-    groups: ['Set up the solution', 'Run it by hand', 'Teach the agent', 'Run it again'],
+    groups: ['Orientation', 'Set up the solution', 'Run it by hand', 'Teach the agent', 'Run it again'],
   },
 ]
 
