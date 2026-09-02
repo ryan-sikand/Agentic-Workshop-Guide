@@ -190,6 +190,23 @@ export function sectionById(id: string): WorkshopSection {
   return section
 }
 
+// The seven stages Document Understanding gives you, in the order it runs them.
+// `today` marks the two an attendee actually wires in lab 1 - the rest are drawn
+// so the lab is honest about how much of the product it is not touching.
+export const duPipeline: {
+  stage: string
+  lines: [string, string]
+  today?: boolean
+}[] = [
+  { stage: 'Load taxonomy', lines: ['Define the fields', 'to extract'] },
+  { stage: 'Digitize', lines: ['OCR the file into', 'readable text'], today: true },
+  { stage: 'Classify', lines: ['Split a mixed batch', 'by document type'] },
+  { stage: 'Extract', lines: ['Pull the field', 'values out'], today: true },
+  { stage: 'Validate', lines: ['A person corrects', 'the results'] },
+  { stage: 'Retrain', lines: ['Feed corrections', 'back into the model'] },
+  { stage: 'Export', lines: ['Hand the values', 'to another system'] },
+]
+
 export const foiaPipeline: {
   stage: string
   actor: 'Automation' | 'Agent' | 'Human'
