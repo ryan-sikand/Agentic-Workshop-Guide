@@ -191,20 +191,21 @@ export function sectionById(id: string): WorkshopSection {
 }
 
 // The seven stages Document Understanding gives you, in the order it runs them.
-// `today` marks the two an attendee actually wires in lab 1 - the rest are drawn
-// so the lab is honest about how much of the product it is not touching.
+// `scope` drives the colour: 'lab1' is covered here, 'lab2' comes back in the
+// other lab, and no scope means the workshop does not cover it at all. Drawing
+// all seven keeps the lab honest about how much of the product it leaves alone.
 export const duPipeline: {
   stage: string
   lines: [string, string]
-  today?: boolean
+  scope?: 'lab1' | 'lab2'
 }[] = [
-  { stage: 'Load taxonomy', lines: ['Define the fields', 'to extract'] },
-  { stage: 'Digitize', lines: ['OCR the file into', 'readable text'], today: true },
+  { stage: 'Load taxonomy', lines: ['Define the fields', 'to extract'], scope: 'lab1' },
+  { stage: 'Digitize', lines: ['OCR the file into', 'readable text'], scope: 'lab1' },
   { stage: 'Classify', lines: ['Split a mixed batch', 'by document type'] },
-  { stage: 'Extract', lines: ['Pull the field', 'values out'], today: true },
-  { stage: 'Validate', lines: ['A person corrects', 'the results'] },
+  { stage: 'Extract', lines: ['Pull the field', 'values out'], scope: 'lab1' },
+  { stage: 'Validate', lines: ['A person corrects', 'the results'], scope: 'lab2' },
   { stage: 'Retrain', lines: ['Feed corrections', 'back into the model'] },
-  { stage: 'Export', lines: ['Hand the values', 'to another system'] },
+  { stage: 'Export', lines: ['Hand the values', 'to another system'], scope: 'lab2' },
 ]
 
 export const foiaPipeline: {

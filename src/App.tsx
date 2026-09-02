@@ -819,27 +819,40 @@ function screenshotSize(src: string) {
 // called out. Drawing all seven rather than only the two keeps the lab honest
 // about how much of the product it leaves alone, which is the question an
 // attendee asks as soon as they see one document type and no classifier.
-const DU_GEOMETRY = { cardWidth: 140, cardHeight: 120, spacing: 166, firstX: 8, cardY: 48, dotY: 26 }
+// Blue for what this lab covers, amber for what lab 2 covers, neutral for the
+// stages the workshop never reaches. Explicit palette stops rather than theme
+// tokens for the amber, so it holds its meaning in both light and dark.
+const DU_SCOPE_STYLES = {
+  lab1: { rect: 'fill-card stroke-primary', dot: 'fill-primary', dotText: 'fill-primary-foreground' },
+  lab2: { rect: 'fill-card stroke-amber-500', dot: 'fill-amber-500', dotText: 'fill-amber-950' },
+  none: { rect: 'fill-card stroke-border', dot: 'fill-muted stroke-border', dotText: 'fill-muted-foreground' },
+} as const
+
+const DU_GEOMETRY = { cardWidth: 140, cardHeight: 88, spacing: 166, firstX: 8, cardY: 48, dotY: 26 }
 
 function DuPipelineDiagram() {
   const { cardWidth, cardHeight, spacing, firstX, cardY, dotY } = DU_GEOMETRY
   const cards = duPipeline.map((entry, index) => {
     const x = firstX + index * spacing
-    return { ...entry, x, center: x + cardWidth / 2 }
+    return { ...entry, x, center: x + cardWidth / 2, style: DU_SCOPE_STYLES[entry.scope ?? 'none'] }
   })
   const width = firstX + (cards.length - 1) * spacing + cardWidth + firstX
 
   return (
     <div>
-      <h3 className="mb-3 font-semibold">What Document Understanding gives you</h3>
+      <h3 className="mb-3 font-semibold">The full Document Understanding pipeline</h3>
       <div className="overflow-x-auto rounded-xl border bg-muted/20 py-4">
         <svg
           aria-label={`The seven Document Understanding stages: ${duPipeline
-            .map((entry, index) => `${index + 1} ${entry.stage}${entry.today ? ' (built in this lab)' : ''}`)
+            .map((entry, index) => {
+              const scope =
+                entry.scope === 'lab1' ? ' (covered in this lab)' : entry.scope === 'lab2' ? ' (covered in lab 2)' : ''
+              return `${index + 1} ${entry.stage}${scope}`
+            })
             .join(', ')}.`}
           className="block h-auto w-full min-w-[1000px]"
           role="img"
-          viewBox={`0 0 ${width} 188`}
+          viewBox={`0 0 ${width} 156`}
         >
           {/* the run, as a dotted spine through the stage numbers */}
           <line
@@ -855,14 +868,14 @@ function DuPipelineDiagram() {
           {cards.map((card, index) => (
             <g key={card.stage}>
               <circle
-                className={card.today ? 'fill-primary' : 'fill-muted stroke-border'}
+                className={card.style.dot}
                 cx={card.center}
                 cy={dotY}
                 r="13"
                 strokeWidth="1"
               />
               <text
-                className={card.today ? 'fill-primary-foreground' : 'fill-muted-foreground'}
+                className={card.style.dotText}
                 fontSize="13"
                 fontWeight="700"
                 textAnchor="middle"
@@ -873,10 +886,10 @@ function DuPipelineDiagram() {
               </text>
 
               <rect
-                className={card.today ? 'fill-card stroke-primary' : 'fill-card stroke-border'}
+                className={card.style.rect}
                 height={cardHeight}
                 rx="10"
-                strokeWidth={card.today ? '2' : '1'}
+                strokeWidth={card.scope ? '2' : '1'}
                 width={cardWidth}
                 x={card.x}
                 y={cardY}
@@ -897,44 +910,18 @@ function DuPipelineDiagram() {
                   {card.lines[1]}
                 </tspan>
               </text>
-
-              {card.today && (
-                <>
-                  <rect
-                    className="fill-primary"
-                    height="19"
-                    rx="9.5"
-                    width="66"
-                    x={card.center - 33}
-                    y={cardY + 82}
-                  />
-                  <text
-                    className="fill-primary-foreground"
-                    fontSize="9.5"
-                    fontWeight="700"
-                    letterSpacing="0.09em"
-                    textAnchor="middle"
-                    x={card.center}
-                    y={cardY + 95}
-                  >
-                    TODAY
-                  </text>
-                </>
-              )}
             </g>
           ))}
         </svg>
       </div>
       <p className="mt-3 max-w-4xl text-sm leading-6 text-muted-foreground">
-        All seven stages ship with the product. This lab wires the two marked TODAY, against a model that
-        has already been trained for you - you will tour its taxonomy and its accuracy score in step 1.
+        All seven stages ship with the product. The three in blue are the ones we cover today, against a
+        model that has already been trained for you. The two in amber you will meet in Lab 2.
       </p>
       <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">
-        Two absences are worth naming. <strong className="text-foreground">Classify</strong> does nothing
-        useful here because every document is the same form, so the automation calls extraction directly.
-        And <strong className="text-foreground">Validate</strong> in this diagram means a person correcting
-        results to produce training data, which feeds Retrain - not the same thing as the Action Center
-        approval you add in step 3, which is a business sign-off on a finished run.
+        For today's lab we will be looking at a single SF doc type, so we will not need to classify. We
+        will see examples of human-in-the-loop validation and exports in the second lab. We will discuss
+        training, but not actively retrain our DU models today.
       </p>
     </div>
   )
