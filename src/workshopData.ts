@@ -29,7 +29,7 @@ export const workshopSections: WorkshopSection[] = [
     duration: '3 min',
     group: 'Start here',
     brandIcon: brandIcons.overview,
-    searchTerms: 'overview requirements workshop path account shared resources',
+    searchTerms: 'overview requirements workshop path account shared resources foia reading room sample documents documentSearchTerm file name contents search',
   },
   {
     id: 'du-model',
