@@ -29,7 +29,14 @@ describe('Agentic Redaction Workshop', () => {
     expect(screen.queryByRole('img', { name: 'Customer logo placeholder' })).not.toBeInTheDocument()
     expect(screen.getByText('Hosted by the UiPath SE Team')).toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: 'Learn Document Understanding, then build a redaction workflow' }),
+      screen.getByRole('heading', { name: 'Two hands-on tracks: automated forms, and agentic redaction' }),
+    ).toBeInTheDocument()
+    // Each track stands alone, so each has to introduce itself on the page.
+    expect(
+      screen.getByRole('heading', { name: 'Automated SF Processing overview' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Agentic FOIA Redaction overview' }),
     ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /UiPath Academy/ })).toHaveAttribute(
       'href',
@@ -40,7 +47,8 @@ describe('Agentic Redaction Workshop', () => {
       'https://www.uipath.com/',
     )
     expect(screen.queryByText('Open Staging')).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Join the workshop/ })).toHaveAttribute(
+    expect(screen.getAllByRole('link', { name: /Join the workshop/ })).toHaveLength(2)
+    expect(screen.getAllByRole('link', { name: /Join the workshop/ })[0]).toHaveAttribute(
       'href',
       'https://uipathlabs.uipath.com/join/B6Z8ZV8J',
     )

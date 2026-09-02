@@ -1,5 +1,5 @@
 import { brandIcons, type BrandIconComponent } from './components/BrandIcons'
-export type WorkshopPart = 'Document Understanding' | 'FOIA redaction'
+export type WorkshopPart = 'Automated SF Processing' | 'Agentic FOIA Redaction'
 
 export type WorkshopSection = {
   id: string
@@ -10,9 +10,8 @@ export type WorkshopSection = {
   description: string
   duration: string
   group:
-    | 'Start here'
-    | 'Extract the data'
     | 'Orientation'
+    | 'Extract the data'
     | 'Set up the solution'
     | 'Run it by hand'
     | 'Teach the agent'
@@ -23,18 +22,19 @@ export type WorkshopSection = {
 
 export const workshopSections: WorkshopSection[] = [
   {
-    id: 'overview',
-    title: 'Workshop overview',
-    shortTitle: 'Overview',
-    description: 'Understand the outcome and path through the workshop.',
+    id: 'sf-overview',
+    part: 'Automated SF Processing',
+    title: 'Automated SF Processing overview',
+    shortTitle: 'Track overview',
+    description: 'What this track covers, and the account you will need.',
     duration: '3 min',
-    group: 'Start here',
+    group: 'Orientation',
     brandIcon: brandIcons.overview,
-    searchTerms: 'overview requirements workshop path account shared resources foia reading room sample documents documentSearchTerm file name contents search',
+    searchTerms: 'overview track requirements account credentials sign in continue with microsoft standard form sf1449 extraction model taxonomy annotate measure validation action center what you will build',
   },
   {
     id: 'du-model',
-    part: 'Document Understanding',
+    part: 'Automated SF Processing',
     step: 1,
     title: 'Tour the trained SF1449 model',
     shortTitle: 'DU model tour',
@@ -46,7 +46,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'du-studio',
-    part: 'Document Understanding',
+    part: 'Automated SF Processing',
     step: 2,
     title: 'Open the model in Studio Web',
     shortTitle: 'Studio Web setup',
@@ -58,7 +58,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'du-validation',
-    part: 'Document Understanding',
+    part: 'Automated SF Processing',
     step: 3,
     title: 'Assign the validation to yourself',
     shortTitle: 'Validation task',
@@ -70,7 +70,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'du-run',
-    part: 'Document Understanding',
+    part: 'Automated SF Processing',
     step: 4,
     title: 'Run it and validate in Action Center',
     shortTitle: 'Run and validate',
@@ -82,18 +82,18 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'foia-overview',
-    part: 'FOIA redaction',
-    title: 'FOIA overview',
-    shortTitle: 'FOIA overview',
-    description: 'What the workflow does, and what you will change about it.',
+    part: 'Agentic FOIA Redaction',
+    title: 'Agentic FOIA Redaction overview',
+    shortTitle: 'Track overview',
+    description: 'What the workflow does, what you will change, and the account you will need.',
     duration: '4 min',
     group: 'Orientation',
     brandIcon: brandIcons.overview,
-    searchTerms: 'foia freedom of information act exemption withholding overview pipeline search analyze localize review redact deliver reading room sample documents documentSearchTerm file name contents what you will build',
+    searchTerms: 'overview track account credentials sign in continue with microsoft foia freedom of information act exemption withholding pipeline search analyze localize review redact deliver reading room sample documents documentSearchTerm file name contents what you will build',
   },
   {
     id: 'project-setup',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 1,
     title: 'Create your workshop solution',
     shortTitle: 'Project setup',
@@ -105,7 +105,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'review-routing',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 2,
     title: 'Route the work to yourself',
     shortTitle: 'Review routing',
@@ -117,7 +117,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'solution-resources',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 3,
     title: 'Map the solution resources',
     shortTitle: 'Solution resources',
@@ -129,7 +129,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'run-one',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 4,
     title: 'Run it once, the hard way',
     shortTitle: 'Run 1 by hand',
@@ -141,7 +141,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'agent-context',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 5,
     title: 'Give the agent its policy source',
     shortTitle: 'Attach the context',
@@ -153,7 +153,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'agent-classify',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 6,
     title: 'Teach the agent your vocabulary',
     shortTitle: 'Finding classification',
@@ -165,7 +165,7 @@ export const workshopSections: WorkshopSection[] = [
   },
   {
     id: 'run-two',
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     step: 7,
     title: 'Run it again and see the difference',
     shortTitle: 'Run 2 and review',
@@ -190,15 +190,6 @@ export function sectionById(id: string): WorkshopSection {
   return section
 }
 
-// Derived from the section durations, rounded to the nearest five minutes so the
-// hero stays honest when steps are added or their durations change.
-export const totalDurationMinutes =
-  Math.round(
-    workshopSections.reduce((total, section) => total + (Number.parseInt(section.duration, 10) || 0), 0) / 5,
-  ) * 5
-
-// The BPMN has far more nodes than this, but these are the six an attendee can
-// see the effect of. Kept in the order the process runs them.
 export const foiaPipeline: { stage: string; detail: string }[] = [
   {
     stage: 'Search',
@@ -293,23 +284,62 @@ export const solutionResourceRows: { kind: string; resource: string }[] = [
 ]
 
 export const groups = [
-  'Start here',
-  'Extract the data',
   'Orientation',
+  'Extract the data',
   'Set up the solution',
   'Run it by hand',
   'Teach the agent',
   'Run it again',
 ] as const
 
-// Each part runs its own step count, so the navigation has to say which part a
-// step belongs to before its number means anything.
-export const workshopParts: { title: WorkshopPart | null; groups: readonly (typeof groups)[number][] }[] = [
-  { title: null, groups: ['Start here'] },
-  { title: 'Document Understanding', groups: ['Extract the data'] },
+// Two independent tracks sharing one page. Each numbers its own steps from 1 and
+// carries its own orientation, so an attendee can do either one on its own.
+// Group names repeat across tracks ('Orientation'), so anything resolving a group
+// to its sections must scope by part as well - see sectionsInPartGroup.
+export const workshopParts: { title: WorkshopPart; groups: readonly (typeof groups)[number][] }[] = [
+  { title: 'Automated SF Processing', groups: ['Orientation', 'Extract the data'] },
   {
-    title: 'FOIA redaction',
+    title: 'Agentic FOIA Redaction',
     groups: ['Orientation', 'Set up the solution', 'Run it by hand', 'Teach the agent', 'Run it again'],
+  },
+]
+
+export function sectionsInPartGroup(part: WorkshopPart, group: (typeof groups)[number]) {
+  return workshopSections.filter((section) => section.part === part && section.group === group)
+}
+
+// Numbered steps only - the orientation sections carry no checkbox.
+export function stepsInPart(part: WorkshopPart) {
+  return progressSections.filter((section) => section.part === part)
+}
+
+export function durationForPart(part: WorkshopPart) {
+  const total = workshopSections
+    .filter((section) => section.part === part)
+    .reduce((sum, section) => sum + (Number.parseInt(section.duration, 10) || 0), 0)
+  return Math.round(total / 5) * 5
+}
+
+// Hero cards. Each track stands alone, so each gets its own pitch and entry point.
+export const trackSummaries: {
+  part: WorkshopPart
+  subtitle: string
+  blurb: string
+  firstSectionId: string
+}[] = [
+  {
+    part: 'Automated SF Processing',
+    subtitle: 'Document Understanding',
+    blurb:
+      'Standard forms, read by a trained extraction model. Tour how the model was taught and scored, then run it against real SF1449 forms and approve every extracted value yourself.',
+    firstSectionId: 'sf-overview',
+  },
+  {
+    part: 'Agentic FOIA Redaction',
+    subtitle: 'Maestro, agents, and Action Center',
+    blurb:
+      'A working FOIA redaction workflow, run twice on the same document. First with an agent that cannot justify a single finding, then again once you have given it a policy source and a vocabulary.',
+    firstSectionId: 'foia-overview',
   },
 ]
 
@@ -318,14 +348,14 @@ export const workflowTracks: {
   stages: { label: string; detail: string; icon: BrandIconComponent }[]
 }[] = [
   {
-    part: 'Document Understanding',
+    part: 'Automated SF Processing',
     stages: [
       { label: 'Extract', detail: 'Pull fields off SF1449 forms', icon: brandIcons.idp },
       { label: 'Validate', detail: 'Approve every result yourself', icon: brandIcons.validate },
     ],
   },
   {
-    part: 'FOIA redaction',
+    part: 'Agentic FOIA Redaction',
     stages: [
       { label: 'Find', detail: 'Search FOIA files', icon: brandIcons.find },
       { label: 'Analyze', detail: 'Detect PII', icon: brandIcons.agent },

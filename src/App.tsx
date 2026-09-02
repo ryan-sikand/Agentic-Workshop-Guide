@@ -107,17 +107,21 @@ import { workshopBranding } from './branding'
 import {
   autopilotPrompt,
   categoryExemptionMap,
+  durationForPart,
   findingClassificationSection,
   foiaPipeline,
   identityRows,
   progressSections,
   recipientEmailsExample,
   sectionById,
+  sectionsInPartGroup,
   solutionResourceRows,
-  totalDurationMinutes,
+  stepsInPart,
+  trackSummaries,
   workflowTracks,
   workshopParts,
   workshopSections,
+  type WorkshopPart,
   type WorkshopSection,
 } from './workshopData'
 
@@ -387,7 +391,7 @@ const steps = {
       },
     },
     'Open the first action. The extracted values are listed on the left and the source document is displayed on the right. Compare each value against the document, correct anything the model got wrong, then select Submit.',
-    'Repeat for the remaining three actions. Once all four are submitted, Part 1 is done and the extracted data has been through a human check.',
+    'Repeat for the remaining three actions. Once all four are submitted, this track is done and the extracted data has been through a human check.',
   ],
   foiaSetup: [
     'Open your workshop registration page and keep it available. You will need the credentials under Your Workshop Account, and later you will need a second, personal email address that can actually receive mail.',
@@ -782,6 +786,88 @@ function screenshotSize(src: string) {
   )
 }
 
+// Both tracks stand alone, so both have to tell an attendee how to get an
+// account. Same block, rendered in each track's orientation section.
+function AccountSetup() {
+  return (
+    <Alert>
+      <Check className="h-4 w-4" />
+      <AlertTitle>Before you begin</AlertTitle>
+      <AlertDescription className="mt-3 space-y-4 leading-6">
+        <p>Register for the workshop to receive the UiPath username and password assigned to you.</p>
+        <ol className="space-y-3">
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              1
+            </span>
+            <span>
+              Open the registration page, enter your name, and use workshop code{' '}
+              <strong>{workshopJoinCode}</strong> if prompted.
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              2
+            </span>
+            <span>
+              On your workshop page, save or bookmark the page so you can return to your assigned credentials.
+              Then select <strong>Open UiPath Environment</strong>.
+            </span>
+          </li>
+          <li className="flex gap-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+              3
+            </span>
+            <span>
+              When the UiPath sign-in page opens, choose <strong>Continue with Microsoft</strong>. Sign in with
+              the username and password displayed under <strong>Your Workshop Account</strong> on the previous
+              page.
+            </span>
+          </li>
+        </ol>
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-background/70 p-3">
+          <Button asChild size="sm">
+            <a href={workshopJoinUrl} rel="noreferrer" target="_blank">
+              Join the workshop <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Workshop code: <strong className="text-foreground">{workshopJoinCode}</strong>
+          </span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Whenever a debug profile asks you to resolve dependencies, use the resources under the{' '}
+          <strong className="text-foreground">Shared</strong> folder.
+        </p>
+      </AlertDescription>
+    </Alert>
+  )
+}
+
+function TrackStages({ part }: { part: WorkshopPart }) {
+  const track = workflowTracks.find((entry) => entry.part === part)
+  if (!track) return null
+  return (
+    <div>
+      <h3 className="mb-4 font-semibold">What you will build</h3>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {track.stages.map(({ label, detail, icon: Icon }, index) => (
+          <div className="relative rounded-xl border bg-muted/20 p-4" key={label}>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Icon className="h-6 w-6" />
+              </div>
+              <span className="text-xs font-semibold text-muted-foreground">0{index + 1}</span>
+            </div>
+            <p className="font-semibold">{label}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function ScreenshotFigure({
   src,
   alt,
@@ -1075,15 +1161,29 @@ export default function App() {
 
   const nav = (
     <nav aria-label="Workshop steps" className="space-y-6">
-      {workshopParts.map((part) => (
-        <div className="space-y-4" key={part.title ?? 'start'}>
-          {part.title && (
-            <p className="flex items-center gap-2 border-b pb-2 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
+      {workshopParts.map((part) => {
+        const partSteps = stepsInPart(part.title)
+        const partDone = partSteps.filter((section) => completed.has(section.id)).length
+        return (
+        <div className="space-y-4" key={part.title}>
+          <div className="border-b pb-2">
+            <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
               {part.title}
             </p>
-          )}
+            <div className="mt-1.5 flex items-center gap-2">
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary transition-[width] duration-500"
+                  style={{ width: `${Math.round((partDone / partSteps.length) * 100)}%` }}
+                />
+              </div>
+              <span className="shrink-0 text-[10px] font-medium tabular-nums text-muted-foreground">
+                {partDone}/{partSteps.length}
+              </span>
+            </div>
+          </div>
           {part.groups.map((group) => {
-            const sections = workshopSections.filter((section) => section.group === group)
+            const sections = sectionsInPartGroup(part.title, group)
             return (
               <div key={group}>
                 <p className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -1122,7 +1222,8 @@ export default function App() {
             )
           })}
         </div>
-      ))}
+        )
+      })}
     </nav>
   )
 
@@ -1214,15 +1315,9 @@ export default function App() {
       <div className="grid lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="sticky top-[66px] hidden h-[calc(100vh-66px)] overflow-y-auto border-r p-5 lg:block">
           <div className="mb-6 rounded-xl border bg-muted/30 p-4">
-            <div className="mb-2 flex items-center justify-between gap-3 text-xs font-medium">
-              <span>Workshop progress</span>
-              <span className="text-primary">{progress}%</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${progress}%` }} />
-            </div>
-            <p className="mt-2 text-xs leading-5 text-muted-foreground">
-              Your progress is saved in this browser.
+            <p className="text-xs font-medium">Two independent tracks</p>
+            <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
+              Do either one on its own, in any order. Progress for each is saved in this browser.
             </p>
           </div>
           <Button className="mb-5 w-full" onClick={toggleAllSections} size="sm" variant="outline">
@@ -1255,32 +1350,49 @@ export default function App() {
                   UiPath Agentic Automation · Hands-on Workshop
                 </Badge>
                 <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                  Learn Document Understanding, then build a redaction workflow
+                  Two hands-on tracks: automated forms, and agentic redaction
                 </h1>
                 <p className="mt-5 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
-                  Two separate exercises. Part 1 is an introduction to Document Understanding: see how a model is built,
-                  then run one against sample forms and check the results yourself. Part 2 hands you a working FOIA redaction
-                  workflow and asks you to run it twice - once with an agent that cannot justify its findings, then again
-                  after you give it a policy source and a vocabulary. No UiPath experience needed.
+                  Each track is self-contained and starts from step 1. Take one or take both, in whichever
+                  order suits you. No UiPath experience needed for either.
                 </p>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <Button onClick={() => navigateTo(completed.size ? progressSections.find((item) => !completed.has(item.id))?.id ?? 'run-two' : 'du-model')} size="lg">
-                    {completed.size ? 'Resume workshop' : 'Start workshop'} <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
               </div>
 
-              <div className="mt-10 grid gap-3 sm:grid-cols-3">
-                {[
-                  [`${progressSections.length} guided steps`, 'Clear checkpoints from setup to delivered document'],
-                  [`About ${totalDurationMinutes} minutes`, 'Work at your pace; progress is saved'],
-                  ['Human in the loop', 'You approve every extraction and every redaction'],
-                ].map(([title, description]) => (
-                  <div className="rounded-xl border bg-background/90 p-4 shadow-sm backdrop-blur" key={title}>
-                    <p className="font-semibold">{title}</p>
-                    <p className="mt-1 text-sm leading-5 text-muted-foreground">{description}</p>
-                  </div>
-                ))}
+              <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                {trackSummaries.map((track) => {
+                  const partSteps = stepsInPart(track.part)
+                  const partDone = partSteps.filter((section) => completed.has(section.id)).length
+                  return (
+                    <div
+                      className="flex flex-col rounded-xl border bg-background/90 p-5 shadow-sm backdrop-blur"
+                      key={track.part}
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+                        {track.subtitle}
+                      </p>
+                      <p className="mt-1.5 text-lg font-semibold">{track.part}</p>
+                      <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{track.blurb}</p>
+                      <p className="mt-4 text-xs font-medium text-muted-foreground">
+                        {partSteps.length} steps · about {durationForPart(track.part)} minutes
+                        {partDone > 0 && ` · ${partDone} done`}
+                      </p>
+                      <Button
+                        className="mt-3 w-full"
+                        onClick={() =>
+                          navigateTo(
+                            partDone > 0
+                              ? partSteps.find((item) => !completed.has(item.id))?.id ?? track.firstSectionId
+                              : track.firstSectionId,
+                          )
+                        }
+                        variant={partDone > 0 ? 'outline' : 'default'}
+                      >
+                        {partDone > 0 ? 'Resume this track' : 'Start this track'}{' '}
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -1319,76 +1431,20 @@ export default function App() {
               </div>
             )}
 
-            {visibleIds.has('overview') && (
-              <WorkshopCard section={sectionById('overview')}>
-                <Alert>
-                  <Check className="h-4 w-4" />
-                  <AlertTitle>Before you begin</AlertTitle>
-                  <AlertDescription className="mt-3 space-y-4 leading-6">
-                    <p>
-                      Register for the workshop to receive the UiPath username and password assigned to you.
-                    </p>
-                    <ol className="space-y-3">
-                      <li className="flex gap-3">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">1</span>
-                        <span>
-                          Open the registration page, enter your name, and use workshop code <strong>{workshopJoinCode}</strong> if prompted.
-                        </span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">2</span>
-                        <span>
-                          On your workshop page, save or bookmark the page so you can return to your assigned credentials. Then select <strong>Open UiPath Environment</strong>.
-                        </span>
-                      </li>
-                      <li className="flex gap-3">
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">3</span>
-                        <span>
-                          When the UiPath sign-in page opens, choose <strong>Continue with Microsoft</strong>. Sign in with the username and password displayed under <strong>Your Workshop Account</strong> on the previous page.
-                        </span>
-                      </li>
-                    </ol>
-                    <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-background/70 p-3">
-                      <Button asChild size="sm">
-                        <a href={workshopJoinUrl} rel="noreferrer" target="_blank">
-                          Join the workshop <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      </Button>
-                      <span className="text-sm text-muted-foreground">
-                        Workshop code: <strong className="text-foreground">{workshopJoinCode}</strong>
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      During the exercises, use resources under the <strong className="text-foreground">Shared</strong> folder whenever a debug profile asks you to resolve dependencies.
-                    </p>
-                  </AlertDescription>
-                </Alert>
-                <div>
-                  <h3 className="mb-4 font-semibold">What you will build</h3>
-                  <div className="space-y-5">
-                    {workflowTracks.map((track) => (
-                      <div key={track.part}>
-                        <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                          {track.part}
-                        </p>
-                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                          {track.stages.map(({ label, detail, icon: Icon }, index) => (
-                            <div className="relative rounded-xl border bg-muted/20 p-4" key={label}>
-                              <div className="mb-3 flex items-center justify-between">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                  <Icon className="h-6 w-6" />
-                                </div>
-                                <span className="text-xs font-semibold text-muted-foreground">0{index + 1}</span>
-                              </div>
-                              <p className="font-semibold">{label}</p>
-                              <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            {visibleIds.has('sf-overview') && (
+              <WorkshopCard section={sectionById('sf-overview')}>
+                <p className="leading-7">
+                  Federal agencies run on standard forms. An SF1449 alone carries the vendor, the contract number,
+                  the line items and the pricing, and someone has to get those values out of a PDF and into a
+                  system before any of it can be actioned. Typing them by hand is slow and quietly error-prone.
+                </p>
+                <p className="leading-7">
+                  This track uses a document extraction model that has already been trained on 83 SF1449 forms.
+                  You will see how it was taught, check how accurate it is, then point an automation at it, run it
+                  over four real forms, and approve every value it pulls.
+                </p>
+                <TrackStages part="Automated SF Processing" />
+                <AccountSetup />
               </WorkshopCard>
             )}
 
@@ -1405,8 +1461,8 @@ export default function App() {
                   <AlertDescription className="mt-1 leading-6">
                     Building a model means naming the fields you want, letting it make a first pass of predictions, and
                     correcting what it got wrong until the scores come up. Training takes longer than this workshop allows, so
-                    FMS Training has already been through that across 83 documents. Part 1 is about reading a trained model and
-                    then using it, not producing one.
+                    FMS Training has already been through that across 83 documents. This track is about reading a trained model
+                    and then using it, not producing one.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
@@ -1456,9 +1512,10 @@ export default function App() {
                   <Users className="h-4 w-4" />
                   <AlertTitle>No wait activity, and that is the point</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    This automation finishes on its own and leaves the actions queued for a person. Later in the workshop the
-                    redaction process does the opposite: it waits for its reviewer before releasing the document. Same human
-                    checkpoint, two different couplings, and you will have worked through both by the end.
+                    This automation finishes on its own and leaves the actions queued for a person to pick up later.
+                    The alternative is a process that waits for its reviewer before carrying on. Both are valid
+                    human checkpoints; which one you want depends on whether the rest of the work can proceed
+                    without the answer.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
@@ -1473,12 +1530,12 @@ export default function App() {
                 <Checklist items={steps.duRun} />
                 <Alert>
                   <CheckCircle2 className="h-4 w-4" />
-                  <AlertTitle>That is Part 1</AlertTitle>
+                  <AlertTitle>Track complete</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    Extracted values like these can be written to variables, pushed into Excel, or handed to another
-                    automation. Part 2 moves to a different shape of problem: a FOIA redaction workflow that puts Maestro,
-                    agents, Document Understanding and Action Center together, already built, with three deliberate gaps
-                    for you to fill.
+                    You have seen how an extraction model is trained and scored, consumed a deployed version of it
+                    from an automation, and put a human approval step in front of every value it pulled. Extracted
+                    values like these can be written to variables, pushed into Excel, or handed to another
+                    automation from here.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
@@ -1494,7 +1551,7 @@ export default function App() {
                   blacked out. It is slow, and it carries legal consequences when it goes wrong.
                 </p>
                 <p className="leading-7">
-                  Part 2 hands you that process already built as a Maestro workflow, with an agent doing the
+                  This track hands you that process already built as a Maestro workflow, with an agent doing the
                   reading and a person keeping the decisions.
                 </p>
                 <div>
@@ -1548,10 +1605,11 @@ export default function App() {
                       </a>
                     </Button>
                     <span className="text-sm text-muted-foreground">
-                      This workshop uses <code>geothermal</code>, which matches one document with three findings.
+                      This track uses <code>geothermal</code>, which matches one document with three findings.
                     </span>
                   </div>
                 </div>
+                <AccountSetup />
               </WorkshopCard>
             )}
 
