@@ -130,7 +130,7 @@ describe('Agentic Redaction Workshop', () => {
     const user = userEvent.setup()
     renderApp()
 
-    await user.type(screen.getByLabelText('Search workshop content'), 'wildcard')
+    await user.type(screen.getByLabelText('Search workshop content'), 'autopilot')
     expect(screen.queryByRole('heading', { name: 'Create your workshop solution' })).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: '1. Project setup' }))
@@ -144,9 +144,9 @@ describe('Agentic Redaction Workshop', () => {
     const user = userEvent.setup()
     renderApp()
 
-    await user.type(screen.getByLabelText('Search workshop content'), 'wildcard')
+    await user.type(screen.getByLabelText('Search workshop content'), 'autopilot')
 
-    expect(screen.getByRole('heading', { name: 'Find the redacted document' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Teach the agent your vocabulary' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Create your workshop solution' })).not.toBeInTheDocument()
   })
 

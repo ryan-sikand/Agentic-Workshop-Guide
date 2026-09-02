@@ -69,29 +69,50 @@ import duWaffleActionsImage from './assets/instructions/du/17-waffle-actions.png
 import duOverviewImage from './assets/instructions/du/18-action-center-overview.png'
 import duInboxImage from './assets/instructions/du/19-action-center-inbox-four-tasks.png'
 import duTypeMenuImage from './assets/instructions/du/20-build-document-type-menu.png'
-import agentTestInputImage from './assets/instructions/agent-test-input.png'
-import agentTestResourcesImage from './assets/instructions/agent-test-resources.png'
-import dataManagerImage from './assets/instructions/data-manager.png'
-import dataManagerInputsImage from './assets/instructions/data-manager-inputs.png'
-import orchestratorPathImage from './assets/instructions/orchestrator-path.png'
-import piiAgentConfigImage from './assets/instructions/pii-agent-config.png'
-import processTestInputImage from './assets/instructions/process-test-input.png'
-import processTestRunImage from './assets/instructions/process-test-run.png'
-import projectRenameImage from './assets/instructions/project-rename.png'
-import redactedDocumentImage from './assets/instructions/review-app.png'
-import storageBucketImage from './assets/instructions/storage-bucket.png'
-import workflowActionAppImage from './assets/instructions/workflow-action-app.png'
-import workflowNameVariableImage from './assets/instructions/workflow-name-variable.png'
+import foiaTemplateImage from './assets/instructions/foia/01-template-search.png'
+import foiaRenameImage from './assets/instructions/foia/02-solution-rename.png'
+import foiaRenamedImage from './assets/instructions/foia/03-solution-renamed.png'
+import foiaRecipientsImage from './assets/instructions/foia/04-recipient-emails.png'
+import foiaAddVarImage from './assets/instructions/foia/05-add-variable.png'
+import foiaAssigneeVarImage from './assets/instructions/foia/06-review-assignee-variable.png'
+import foiaReviewNodeImage from './assets/instructions/foia/07-initial-review-node.png'
+import foiaUseVariablesImage from './assets/instructions/foia/08-assignee-use-variables.png'
+import foiaPickVariableImage from './assets/instructions/foia/09-assignee-pick-variable.png'
+import foiaAssigneeBoundImage from './assets/instructions/foia/10-assignee-bound.png'
+import foiaFinalBoundImage from './assets/instructions/foia/11-final-review-bound.png'
+import foiaDebugButtonImage from './assets/instructions/foia/12-debug-button.png'
+import foiaResourcesMapImage from './assets/instructions/foia/13-solution-resources-mapping.png'
+import foiaResourcesDoneImage from './assets/instructions/foia/14-solution-resources-complete.png'
+import foiaEntrypointImage from './assets/instructions/foia/15-entrypoint-arguments.png'
+import foiaFirstRunImage from './assets/instructions/foia/16-first-debug-run.png'
+import foiaInitialReviewImage from './assets/instructions/foia/17-initial-review-guidance-unavailable.png'
+import foiaAuthorityImage from './assets/instructions/foia/18-add-authority-dropdown.png'
+import foiaConfirmImage from './assets/instructions/foia/19-confirm-redaction.png'
+import foiaContinuesImage from './assets/instructions/foia/20-debug-continues.png'
+import foiaFinalRunOneImage from './assets/instructions/foia/21-final-review-run-one.png'
+import foiaRunOneDoneImage from './assets/instructions/foia/22-first-run-complete.png'
+import foiaAgentDefImage from './assets/instructions/foia/23-pii-agent-definition.png'
+import foiaNewContextImage from './assets/instructions/foia/24-new-context.png'
+import foiaPickIndexImage from './assets/instructions/foia/25-pick-guidance-index.png'
+import foiaContextDoneImage from './assets/instructions/foia/26-context-attached.png'
+import foiaOpenAutopilotImage from './assets/instructions/foia/27-open-autopilot.png'
+import foiaAutopilotAskImage from './assets/instructions/foia/28-autopilot-request.png'
+import foiaAutopilotAcceptImage from './assets/instructions/foia/29-autopilot-accept.png'
+import foiaClassificationImage from './assets/instructions/foia/30-finding-classification-section.png'
+import foiaCleanPillsImage from './assets/instructions/foia/31-clean-categories-with-authority.png'
+import foiaHybridImage from './assets/instructions/foia/32-final-review-hybrid-detection.png'
+import foiaEmailImage from './assets/instructions/foia/33-emailed-package.png'
 import { screenshotDimensions } from './assets/instructions/dimensions'
 import { workshopBranding } from './branding'
 import {
-  agentTestInput,
   autopilotPrompt,
-  piiSummaryDescription,
+  categoryExemptionMap,
+  findingClassificationSection,
+  identityRows,
   progressSections,
+  recipientEmailsExample,
   sectionById,
-  systemPrompt,
-  toolDescription,
+  solutionResourceRows,
   totalDurationMinutes,
   workflowTracks,
   workshopParts,
@@ -366,64 +387,350 @@ const steps = {
     'Open the first action. The extracted values are listed on the left and the source document is displayed on the right. Compare each value against the document, correct anything the model got wrong, then select Submit.',
     'Repeat for the remaining three actions. Once all four are submitted, Part 1 is done and the extracted data has been through a human check.',
   ],
-  setup: [
-    'Open your workshop registration page and keep it available so you can refer back to your assigned credentials.',
-    'Choose Continue with Microsoft and sign in with the username and password shown under Your Workshop Account.',
-    'Confirm that the workshop environment opens successfully.',
-    'Open Studio from the waffle menu.',
-    'Open Templates and search for FOIA or PS Fusion FOIA Redaction Workshop Template.',
-    'Open the three-dot menu and choose New solution from template.',
+  foiaSetup: [
+    'Open your workshop registration page and keep it available. You will need the credentials under Your Workshop Account, and later you will need a second, personal email address that can actually receive mail.',
+    'Open Studio from the waffle menu, then select the Templates tab at the top.',
+    {
+      text: 'Search for agentic foia. One result appears: Agentic FOIA Redaction Workshop - Template v2, published by uipathlabsworkshop. Leave Project type set to All.',
+      figure: {
+        src: foiaTemplateImage,
+        alt: 'Studio Templates tab with a search for agentic foia returning one solution template',
+        caption: 'One result. If you see none, clear the search box and retype it - the filter is exact.',
+      },
+    },
+    'Select the three-dot menu on the template card and choose New solution from template. Studio copies the whole solution into your own workspace and opens it. This takes a few seconds.',
+    {
+      text: 'Rename your copy so you can find it again. Select the solution name at the very top of the Explorer panel on the left, then type a name that includes your own initials or name.',
+      figure: {
+        src: foiaRenameImage,
+        alt: 'The solution open in Studio with the solution name selected in the Explorer panel',
+        caption: 'The solution name sits at the top of Explorer, above Agentic Process. Select it to rename.',
+      },
+    },
+    {
+      text: 'Confirm the rename took. Explorer should now show your name on the solution, with four projects beneath it: Agentic Process, Email Package, PII Agent, and Redaction Agent.',
+      figure: {
+        src: foiaRenamedImage,
+        alt: 'Explorer showing the renamed solution with its four projects',
+        caption: 'Four projects. You will only edit two of them today: Agentic Process and PII Agent.',
+      },
+      note: {
+        title: 'This template already works',
+        body: 'Unlike a build-from-scratch workshop, everything here is wired and functional except three deliberate gaps. Your job is to fill those gaps and watch what each one changes. Do not rebuild anything that is already there.',
+      },
+    },
   ],
-  agent: [
-    'Open the PII Agent in the solution.',
-    'Open the Properties panel using the wrench icon.',
-    'Replace the System Prompt with the workshop prompt below.',
-    'Use Autopilot to generate the User Prompt, then accept the change.',
+  foiaRouting: [
+    {
+      text: 'Open Data manager using the suitcase icon in the narrow strip of icons on the far left. Expand Inputs, then Start event, then select recipientEmails.',
+      figure: {
+        src: foiaRecipientsImage,
+        alt: 'Data manager with recipientEmails selected showing its default array value',
+        caption: 'recipientEmails is an array of strings. Each element is treated as one address.',
+      },
+    },
+    {
+      text: 'In Default value, replace the placeholder your.email@here.com with a real address you can open right now. Keep the existing lewis.bell@uipath.com entry as a second element.',
+      copy: { label: 'recipientEmails format', value: recipientEmailsExample },
+      note: {
+        title: 'Replace, never delete',
+        body: 'If you empty this array the workflow sends no email and raises no error, so the run looks like a success and nothing arrives. Also note that a bare name as its own element will fail - every element must be an address.',
+      },
+    },
+    {
+      text: 'Scroll to the top of Data manager and select the plus icon beside Variables. A variable called property1 appears. Leave Scope set to Process and Type set to Text (String).',
+      figure: {
+        src: foiaAddVarImage,
+        alt: 'Data manager with a newly added variable named property1 at Process scope',
+        caption: 'A new variable defaults to Process scope and Text (String), which is exactly what you need.',
+      },
+    },
+    {
+      text: 'Rename property1 to reviewAssignee using the pencil icon, then set Default value to your provisioned tenant account - the long username from your workshop page, not your personal address. Spelling matters: you will search for this name in the next step.',
+      figure: {
+        src: foiaAssigneeVarImage,
+        alt: 'The variable renamed to reviewAssignee with the tenant account as its default value',
+        caption: 'reviewAssignee, Process scope, holding the tenant account that will receive both review tasks.',
+      },
+    },
+    {
+      text: 'Open Process.bpmn and select the node named FOIA Sensitive Data Review. In the Properties panel on the right, expand Assignments. Assignment Criteria is already set to User. The Assignee field below it is empty - that is the first gap.',
+      figure: {
+        src: foiaReviewNodeImage,
+        alt: 'The FOIA Sensitive Data Review user task selected with an empty Assignee field',
+        caption: 'Everything else on this node is configured. Only Assignee is blank.',
+      },
+    },
+    {
+      text: 'Select the small icon at the right edge of the Assignee field to open the Use menu, then choose Variables. Do not type the account name directly into the field.',
+      figure: {
+        src: foiaUseVariablesImage,
+        alt: 'The Use menu open on the Assignee field showing Assignee, Variables, and expression editors',
+        caption: 'Choose Variables. Typing a literal address here works for one person and breaks for everyone else.',
+      },
+    },
+    {
+      text: 'Type reviewassignee in the search box and select reviewAssignee (string) from the results.',
+      figure: {
+        src: foiaPickVariableImage,
+        alt: 'Variable picker filtered to reviewAssignee showing the match under Process_1',
+        caption: 'The match appears twice - once at the top and once under Process_1. Either selects the same variable.',
+      },
+    },
+    {
+      text: 'Confirm Assignee now shows a reviewAssignee chip rather than empty placeholder text.',
+      figure: {
+        src: foiaAssigneeBoundImage,
+        alt: 'The Assignee field holding a reviewAssignee variable chip',
+        caption: 'Bound. A chip means the value resolves at run time; grey placeholder text means it is still empty.',
+      },
+    },
+    {
+      text: 'Now repeat exactly the same binding on the second review node. Select FOIA Final Redaction Review, further right in the process, and set its Assignee to reviewAssignee the same way.',
+      figure: {
+        src: foiaFinalBoundImage,
+        alt: 'The FOIA Final Redaction Review user task with reviewAssignee bound to Assignee',
+        caption: 'Both review nodes need this. Missing the second one strands the run halfway through.',
+      },
+      note: {
+        title: 'Check both nodes before moving on',
+        body: 'There is no error message for a missing assignee and no retry budget later in the workshop. Select each review node once more and confirm you see a reviewAssignee chip on both, and two entries under recipientEmails.',
+      },
+    },
   ],
-  tool: [
-    'Select Add Tool inside the PII Agent.',
-    'Search for Get File From Storage.',
-    'Choose the tool under solution_folder.',
-    'Add the corrected description below in the Properties panel.',
+  foiaResources: [
+    {
+      text: 'Select the arrow beside the Debug button in the toolbar and choose the option that opens the debug configuration. The Debug configuration dialog opens on the Solution resources tab.',
+      figure: {
+        src: foiaDebugButtonImage,
+        alt: 'The Debug button and its dropdown arrow in the Studio toolbar',
+        caption: 'Use the dropdown arrow, not the Debug button itself, so you get the configuration dialog first.',
+      },
+      note: {
+        title: 'Why this step exists at all',
+        body: 'The solution ships with debug settings scoped to the account that built it, so they resolve for nobody else. Until you map these rows yourself, Debug either refuses to start or fails part way with a reference error.',
+      },
+    },
+    {
+      text: 'Every row under Resources in solution reads Will be deployed in Debug folder. Select each field in turn and pick the matching resource under Shared. The dropdowns list only real, available resources, so there is exactly one sensible choice per row.',
+      figure: {
+        src: foiaResourcesMapImage,
+        alt: 'The Solution resources tab with an app dropdown open showing Shared and the matching app',
+        caption: 'Expand a field, choose the entry under Shared, and move to the next row.',
+      },
+    },
+    {
+      text: 'Work down all seven rows: one app, one storage bucket, one connection, three processes, and one task catalog.',
+      figure: {
+        src: foiaResourcesDoneImage,
+        alt: 'All seven solution resource rows mapped to their Shared counterparts',
+        caption: 'Every row now shows a resource chip. Leave Deploy resources before debugging switched on.',
+      },
+    },
+    {
+      text: 'Switch to the Entrypoint arguments tab. Set documentSearchTerm to geothermal. Leave supplementalSensitiveTerms and additionalInstructions empty, and confirm recipientEmails carries the addresses you set in the previous step.',
+      figure: {
+        src: foiaEntrypointImage,
+        alt: 'The Entrypoint arguments tab with documentSearchTerm set to geothermal',
+        caption: 'geothermal matches one real document with three findings, which is the right size for one sitting.',
+      },
+      note: {
+        title: 'Use geothermal for both runs',
+        body: 'The whole point of the workshop is comparing two runs over the same document. A different search term returns a different document and the comparison stops working. Keep the term identical in run 1 and run 2.',
+      },
+    },
   ],
-  data: [
-    'Open Data Manager using the suitcase icon.',
-    'Confirm the inputs documents and additionalInstructions are present.',
-    'Under Output Schema, add piiSummary as an array.',
-    'Paste the description below and mark the property Required.',
+  foiaRunOne: [
+    {
+      text: 'Select Save and Debug. The process starts and the Execution trail at the bottom fills in as each step completes. Retrieval and analysis take a minute or two.',
+      figure: {
+        src: foiaFirstRunImage,
+        alt: 'The process running in debug with a green execution trail and the review task highlighted',
+        caption: 'Green ticks mark completed steps. The run pauses at FOIA Sensitive Data Review and waits for you.',
+      },
+    },
+    'When the trail reaches FOIA Sensitive Data Review it stops. In the Details panel on the right, select Open app task. Your review opens in a new tab.',
+    {
+      text: 'Read the amber banner at the top: Guidance unavailable - hybrid review used exact supplemental matches only. Human review is required. The agent found three passages worth redacting but has no policy source to justify any of them.',
+      figure: {
+        src: foiaInitialReviewImage,
+        alt: 'The initial review task with an amber guidance unavailable banner and three findings',
+        caption: 'Three findings, verbose invented category labels, and Confirm redaction greyed out at the bottom right.',
+      },
+      note: {
+        title: 'Look at the category labels before you continue',
+        body: 'The pills above each finding read things like Commercial/Financial Informati... and Predecisional/Deliberative Infor..., truncated because the agent invented a full sentence where a label belongs. Nothing told it what vocabulary to use. Remember what these look like - you will change them in step 6.',
+      },
+    },
+    {
+      text: 'The footer says three findings need authority review, and Confirm redaction is disabled. For each finding, open Add authority and pick a statutory exemption from the fourteen-item list. You get no rationale and no suggestion; the choice is entirely yours.',
+      figure: {
+        src: foiaAuthorityImage,
+        alt: 'The Add authority dropdown listing fourteen FOIA statutory exemptions',
+        caption: 'Fourteen exemptions, no guidance. This is the part that should feel tedious.',
+      },
+      note: {
+        title: 'Avoid (b)(3)',
+        body: 'Exemption 3 requires a qualifying statute the app cannot supply, so choosing it hard-blocks Confirm redaction with a message you cannot action. Pick anything else. If a finding seems wrong entirely, Remove excludes it and it stops blocking release.',
+      },
+    },
+    {
+      text: 'Once every finding has an authority, the footer changes to three findings will be sent to redaction and Confirm redaction turns active. Select it.',
+      figure: {
+        src: foiaConfirmImage,
+        alt: 'The review task with all findings labelled and Confirm redaction enabled',
+        caption: 'Each finding now shows a statutory label and an optional reviewer rationale field.',
+      },
+    },
+    {
+      text: 'Back in Studio the trail continues past the review: Run redaction, then Redaction Agent, then Result contract valid, then a second pause at FOIA Final Redaction Review.',
+      figure: {
+        src: foiaContinuesImage,
+        alt: 'The execution trail continuing through the redaction agent to the final review task',
+        caption: 'The redaction itself takes about 40 seconds. Select Open app task again for the final review.',
+      },
+    },
+    {
+      text: 'The final review shows the redacted PDF with black bars carrying the exemption codes you chose. Check the bars land on the right passages, then select Approve final document.',
+      figure: {
+        src: foiaFinalRunOneImage,
+        alt: 'The final redaction review showing the redacted PDF with exemption code bars',
+        caption: 'Your own choices, printed onto the document. Whatever you picked is what appears on the bar.',
+      },
+    },
+    {
+      text: 'The run completes through Email Package to Final document approved. Check the inbox of the address you set in recipientEmails - the redacted PDF is attached.',
+      figure: {
+        src: foiaRunOneDoneImage,
+        alt: 'The completed execution trail ending at Final document approved with global variables listed',
+        caption: 'End to end, with every statutory decision made by hand. Now make the agent do that part.',
+      },
+    },
   ],
-  agentTest: [
-    'Select Debug on the PII Agent.',
-    'In Resources in solution, map every dependency to the matching resource in Shared.',
-    'Paste the sample input into Entrypoint Arguments.',
-    'Choose Save & Debug and inspect the JSON result.',
+  foiaContext: [
+    {
+      text: 'In Explorer, expand PII Agent and select Definition. The agent opens with its model, system prompt, and user prompt.',
+      figure: {
+        src: foiaAgentDefImage,
+        alt: 'The PII Agent definition showing the model, system prompt and user prompt',
+        caption: 'Read the user prompt: it already references a DOJ guidance context that is not attached yet.',
+      },
+      note: {
+        title: 'The unresolved reference is the gap',
+        body: 'The user prompt tells the agent to resolve guidance from a DOJ context, and the reference chip for it is highlighted because nothing is connected. That is why run 1 reported Guidance unavailable. Leave the prompts alone in this step.',
+      },
+    },
+    {
+      text: 'Switch to the Canvas view using the Canvas and Form toggle. Below the agent card is a Context connector with a plus button. Select the plus, then choose Context Grounding Indexes.',
+      figure: {
+        src: foiaNewContextImage,
+        alt: 'The agent canvas with a new context node and a panel offering Context Grounding Indexes or Data Fabric Entities',
+        caption: 'Context Grounding Indexes is for unstructured documents like the DOJ policy PDFs.',
+      },
+    },
+    {
+      text: 'Under Available resources, expand Shared and select doj-foia-redaction-guidance, described as Department of Justice exemption code FOIA policy documentation.',
+      figure: {
+        src: foiaPickIndexImage,
+        alt: 'The index picker listing doj-foia-redaction-guidance under Shared',
+        caption: 'One index. Do not select Create new - the index already exists and is already populated.',
+      },
+    },
+    {
+      text: 'Confirm the canvas now shows doj_foia_redaction_guidance wired to the agent, with Strategy set to Semantic. Leave every setting at its default.',
+      figure: {
+        src: foiaContextDoneImage,
+        alt: 'The attached context node with its name, description, Semantic strategy and retrieval settings',
+        caption: 'Attached. Semantic strategy, no folder prefix, default relevance threshold and result count.',
+      },
+      note: {
+        title: 'This creates a new resource to map',
+        body: 'Attaching the index adds a row to Solution resources that did not exist when you mapped them in step 3. Before your next debug, reopen the debug configuration and map that new index row to Shared as well, or the run will fail on an unresolved reference.',
+      },
+    },
   ],
-  workflow: [
-    'Open Data Manager and create a string variable named name.',
-    'Set the value to your first and last name.',
-    'Select the PII Review App step in the process.',
-    'Set Implementation > Action to Create action app task and choose PII Review App.',
-    'Set the title to PII Review - @name using Process_1 > name.',
-    'Map FilesList and WordsToRedact; map WordsToRedact to wordsToRedactList.',
+  foiaClassify: [
+    {
+      text: 'Switch back to the Form view of the PII Agent, then select Open Autopilot on the right-hand icon strip.',
+      figure: {
+        src: foiaOpenAutopilotImage,
+        alt: 'The PII Agent form view with the Open Autopilot tooltip showing',
+        caption: 'Autopilot edits the prompt for you. You describe the change; it writes the text.',
+      },
+    },
+    {
+      text: 'Paste the request below into Autopilot and send it. You are asking for one new section, not a rewrite.',
+      figure: {
+        src: foiaAutopilotAskImage,
+        alt: 'The Autopilot panel with the finding classification request submitted and generating a response',
+        caption: 'The request names the section, fixes the six allowed values, and says where reasoning belongs.',
+      },
+      copy: { label: 'Autopilot request', value: autopilotPrompt },
+    },
+    {
+      text: 'Autopilot returns the full proposed prompt. Scroll through it and check the existing sections are still there - Role, Source Boundaries, Detection Modes, Safe Guidance Failure - then select Accept.',
+      figure: {
+        src: foiaAutopilotAcceptImage,
+        alt: 'The Autopilot response showing existing prompt sections with Reject and Accept buttons',
+        caption: 'Confirm the other sections survived before accepting. Reject and re-ask if any went missing.',
+      },
+      note: {
+        title: 'Check, do not skim',
+        body: 'Autopilot can rewrite rather than append. If a section disappeared, select Reject, ask again, and say that every existing section must be preserved. If it keeps failing, paste the finished section below into the system prompt by hand instead.',
+      },
+    },
+    {
+      text: 'Open the system prompt and confirm a Finding Classification section now sits between the numbered method steps and Evidence and Provenance, listing exactly six categories.',
+      figure: {
+        src: foiaClassificationImage,
+        alt: 'The system prompt with the new Finding Classification section highlighted',
+        caption: 'Six categories, each defined in FOIA terms, followed by rules keeping reasoning out of the label.',
+      },
+      copy: { label: 'Finished section, if you need to paste it by hand', value: findingClassificationSection },
+    },
+    {
+      text: 'Notice the last rule in the section: reasoning, justification and nuance belong in rationale, not category. Without that sentence the model puts a full explanation back into the label and you are no better off than run 1.',
+    },
   ],
-  processTest: [
-    'Select Debug on the process.',
-    'Map every resource in the test profile to its matching Shared resource.',
-    'Choose a foia_keywords value and optional additionalInstructions.',
-    'Choose Save & Debug and wait for the human review task.',
-  ],
-  review: [
-    'Open the PII Review task created with your name.',
-    'Compare the proposed PII values with the source document.',
-    'Remove false positives and add anything the agent missed.',
-    'Submit the review to let the redaction workflow continue.',
-  ],
-  download: [
-    'Open the Redaction Agent box in the Maestro model.',
-    'In Variables, copy a filename from redactedDocsSBPath.',
-    'Open Orchestrator and enter the Workshop_FOIA_Resources folder.',
-    'Open Storage Buckets, then FOIA_Package_release_Folder.',
-    'Search using the filename or a shortened prefix followed by * and download the result.',
+  foiaRunTwo: [
+    {
+      text: 'Open the debug configuration again. Map the new index row to Shared, leave every other row as you set it in step 3, and confirm documentSearchTerm is still geothermal. Then select Save and Debug.',
+      note: {
+        title: 'Same document, second time',
+        body: 'You changed two things since run 1: the agent now has a policy source, and it now has your category vocabulary. Everything else, including the document, is identical, so every difference you see comes from those two changes.',
+      },
+    },
+    {
+      text: 'When the review task opens, look at the findings panel first. The category pills now read single clean words - Commercial, Deliberative, Geological - and each finding carries an exemption code proposed by the agent, marked Agent default, with its own rationale and a Policy evidence section.',
+      figure: {
+        src: foiaCleanPillsImage,
+        alt: 'A review finding with a clean Commercial category pill, an agent-proposed exemption and rationale',
+        caption: 'Commercial, 97 percent confidence, (b)(4) proposed with a written rationale and real policy evidence.',
+      },
+    },
+    {
+      text: 'Confirm redaction is active immediately. There is no authority to hand-pick, no fourteen-item dropdown, and no amber banner. Select Confirm redaction.',
+      note: {
+        title: 'Where the two halves meet',
+        body: 'The vocabulary you authored in step 6 maps one-to-one onto the exemption families the grounded agent proposes here. All three findings on this document demonstrate it.',
+      },
+    },
+    {
+      text: 'The final review banner now reads Hybrid detection - DOJ guidance was available and finding-level sources are shown below. The bars carry (b)(4), (b)(5) and (b)(9), each reasoned rather than guessed. Select Approve final document.',
+      figure: {
+        src: foiaHybridImage,
+        alt: 'The final redaction review with a hybrid detection banner and exemption code bars',
+        caption: 'Compare this banner with run 1. Same document, same workflow, a grounded agent.',
+      },
+    },
+    {
+      text: 'Check your inbox. The redacted FOIA package arrives with the PDF attached, exemption codes printed on every redaction bar.',
+      figure: {
+        src: foiaEmailImage,
+        alt: 'The delivered email with the redacted PDF attached and its redaction bars visible',
+        caption: 'The finished deliverable, produced end to end with a human approving every redaction.',
+      },
+    },
   ],
 }
 
@@ -949,11 +1256,12 @@ export default function App() {
                 </h1>
                 <p className="mt-5 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
                   Two separate exercises. Part 1 is an introduction to Document Understanding: see how a model is built,
-                  then run one against sample forms and check the results yourself. Part 2 is its own build, a FOIA redaction
-                  workflow using Maestro, agents, Document Understanding and Action Center. No UiPath experience needed.
+                  then run one against sample forms and check the results yourself. Part 2 hands you a working FOIA redaction
+                  workflow and asks you to run it twice - once with an agent that cannot justify its findings, then again
+                  after you give it a policy source and a vocabulary. No UiPath experience needed.
                 </p>
                 <div className="mt-7 flex flex-wrap gap-3">
-                  <Button onClick={() => navigateTo(completed.size ? progressSections.find((item) => !completed.has(item.id))?.id ?? 'download' : 'du-model')} size="lg">
+                  <Button onClick={() => navigateTo(completed.size ? progressSections.find((item) => !completed.has(item.id))?.id ?? 'run-two' : 'du-model')} size="lg">
                     {completed.size ? 'Resume workshop' : 'Start workshop'} <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -961,7 +1269,7 @@ export default function App() {
 
               <div className="mt-10 grid gap-3 sm:grid-cols-3">
                 {[
-                  [`${progressSections.length} guided steps`, 'Clear checkpoints from setup to download'],
+                  [`${progressSections.length} guided steps`, 'Clear checkpoints from setup to delivered document'],
                   [`About ${totalDurationMinutes} minutes`, 'Work at your pace; progress is saved'],
                   ['Human in the loop', 'You approve every extraction and every redaction'],
                 ].map(([title, description]) => (
@@ -1147,7 +1455,7 @@ export default function App() {
                   <AlertDescription className="mt-1 leading-6">
                     This automation finishes on its own and leaves the actions queued for a person. Later in the workshop the
                     redaction process does the opposite: it waits for its reviewer before releasing the document. Same human
-                    checkpoint, two different couplings, and you will have built both by the end.
+                    checkpoint, two different couplings, and you will have worked through both by the end.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
@@ -1165,8 +1473,9 @@ export default function App() {
                   <AlertTitle>That is Part 1</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
                     Extracted values like these can be written to variables, pushed into Excel, or handed to another
-                    automation. Part 2 starts fresh with a different build: a FOIA redaction workflow that puts Maestro,
-                    agents, Document Understanding and Action Center together.
+                    automation. Part 2 moves to a different shape of problem: a FOIA redaction workflow that puts Maestro,
+                    agents, Document Understanding and Action Center together, already built, with three deliberate gaps
+                    for you to fill.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
@@ -1178,268 +1487,192 @@ export default function App() {
                 onComplete={(checked) => toggleComplete('project-setup', checked)}
                 section={sectionById('project-setup')}
               >
-                <Checklist items={steps.setup} />
+                <Checklist items={steps.foiaSetup} />
                 <Alert>
                   <Check className="h-4 w-4" />
                   <AlertTitle>Rename your copy</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    Right-click the solution name and rename it to <strong>YourName - FOIA Workflow</strong>. Later, find it from Studio → Workspaces by searching your name.
+                    Give the solution a name that includes your own, such as <strong>FOIA Redaction Workshop - YourInitials</strong>. Everyone in the room starts from the same template, so an unnamed copy is hard to find again.
                   </AlertDescription>
                 </Alert>
-                <ScreenshotFigure
-                  alt="Studio project menu with Rename highlighted"
-                  caption="Rename the solution from the project menu so your copy is easy to find later."
-                  src={projectRenameImage}
-                />
               </WorkshopCard>
             )}
 
-            {visibleIds.has('pii-agent') && (
+            {visibleIds.has('review-routing') && (
               <WorkshopCard
-                completed={completed.has('pii-agent')}
-                onComplete={(checked) => toggleComplete('pii-agent', checked)}
-                section={sectionById('pii-agent')}
+                completed={completed.has('review-routing')}
+                onComplete={(checked) => toggleComplete('review-routing', checked)}
+                section={sectionById('review-routing')}
               >
-                <Checklist items={steps.agent} />
-                <ScreenshotFigure
-                  alt="PII Agent configuration with the system prompt and Autopilot open"
-                  caption="The PII Agent form shows the system prompt in the center and Autopilot on the right."
-                  src={piiAgentConfigImage}
-                />
-                <CopyBlock label="PII Agent system prompt" maxHeight="max-h-[34rem]" value={systemPrompt} />
-                <CopyBlock label="Autopilot request for the user prompt" value={autopilotPrompt} />
                 <Alert>
-                  <Circle className="h-4 w-4 fill-primary text-primary" />
-                  <AlertTitle>Delimiter matters</AlertTitle>
+                  <Users className="h-4 w-4" />
+                  <AlertTitle>You need two different identities here</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    Keep PII values pipe-delimited with <code>|</code>. Addresses and dates can contain commas, so commas will corrupt the redaction list.
+                    Your workshop tenant account has no mailbox. It can hold a review task but it can never receive an email. Put one identity in each field below, and do not paste the same string into both.
                   </AlertDescription>
                 </Alert>
-              </WorkshopCard>
-            )}
-
-            {visibleIds.has('tools') && (
-              <WorkshopCard
-                completed={completed.has('tools')}
-                onComplete={(checked) => toggleComplete('tools', checked)}
-                section={sectionById('tools')}
-              >
-                <Checklist items={steps.tool} />
-                <CopyBlock label="Tool description" value={toolDescription} />
-                <Alert>
-                  <CheckCircle2 className="h-4 w-4" />
-                  <AlertTitle>Use the direct text path</AlertTitle>
-                  <AlertDescription className="mt-1 leading-6">
-                    The current workshop agent reads <code>result.out_pdfTxt</code> directly. Do not add a second Analyze Files call or map an <code>out_jobId</code>; that older path conflicts with the system prompt.
-                  </AlertDescription>
-                </Alert>
-              </WorkshopCard>
-            )}
-
-            {visibleIds.has('data-manager') && (
-              <WorkshopCard
-                completed={completed.has('data-manager')}
-                onComplete={(checked) => toggleComplete('data-manager', checked)}
-                section={sectionById('data-manager')}
-              >
-                <Checklist items={steps.data} />
-                <div className="grid gap-4 lg:grid-cols-2">
-                  <ScreenshotFigure
-                    alt="Data Manager inputs showing documents and additionalInstructions"
-                    caption="Confirm both workshop inputs are available."
-                    src={dataManagerInputsImage}
-                  />
-                  <ScreenshotFigure
-                    alt="Data Manager output configuration for piiSummary"
-                    caption="Configure piiSummary as a required array output."
-                    src={dataManagerImage}
-                  />
-                </div>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {[
-                    ['Name', 'piiSummary'],
-                    ['Type', 'Array'],
-                    ['Required', 'Yes'],
-                  ].map(([label, value]) => (
-                    <div className="rounded-xl border bg-muted/25 p-4" key={label}>
-                      <p className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
-                      <p className="mt-2 font-semibold">{value}</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {identityRows.map((row) => (
+                    <div className="min-w-0 rounded-xl border bg-muted/25 p-4" key={row.field}>
+                      <p className="font-mono text-xs font-medium tracking-tight text-muted-foreground">{row.field}</p>
+                      <p className="mt-2 break-words font-semibold">{row.value}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">{row.why}</p>
                     </div>
                   ))}
                 </div>
-                <CopyBlock label="piiSummary description" value={piiSummaryDescription} />
+                <Checklist items={steps.foiaRouting} />
               </WorkshopCard>
             )}
 
-            {visibleIds.has('test-agent') && (
+            {visibleIds.has('solution-resources') && (
               <WorkshopCard
-                completed={completed.has('test-agent')}
-                onComplete={(checked) => toggleComplete('test-agent', checked)}
-                section={sectionById('test-agent')}
+                completed={completed.has('solution-resources')}
+                onComplete={(checked) => toggleComplete('solution-resources', checked)}
+                section={sectionById('solution-resources')}
               >
-                <Checklist items={steps.agentTest} />
-                <div className="grid gap-4">
-                  <ScreenshotFigure
-                    alt="Agent debug profile with solution resources mapped from Shared"
-                    caption="Map each solution dependency to its matching resource in Shared."
-                    src={agentTestResourcesImage}
-                  />
-                  <ScreenshotFigure
-                    alt="Agent debug entrypoint arguments containing the sample JSON input"
-                    caption="Paste the sample JSON into Entrypoint arguments before running the agent."
-                    src={agentTestInputImage}
-                  />
+                <Checklist items={steps.foiaResources} />
+                <div>
+                  <h3 className="mb-3 font-semibold">The seven rows, and what each maps to</h3>
+                  <div className="overflow-hidden rounded-xl border">
+                    {solutionResourceRows.map((row, index) => (
+                      <div
+                        className={`flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:justify-between ${
+                          index % 2 === 1 ? 'bg-muted/25' : ''
+                        }`}
+                        key={row.resource}
+                      >
+                        <span className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">
+                          {row.kind}
+                        </span>
+                        <span className="break-words font-mono text-sm font-semibold">
+                          Shared / {row.resource}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <CopyBlock label="Agent debug input" language="json" value={agentTestInput} />
-                <div className="rounded-xl border bg-muted/25 p-4">
-                  <p className="font-semibold">Healthy debug output</p>
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                    Confirm the response is valid JSON and includes documentWithPIIFindings, piiSummary, totalPiiFound, wordsToRedactList, and fileList. Each wordsToRedactList item should align with its file by index.
+                <Alert>
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertTitle>Verify every row, not just the ones you remember</AlertTitle>
+                  <AlertDescription className="mt-1 leading-6">
+                    A row left on <em>Will be deployed in Debug folder</em> is the single most common reason a first run fails. Scroll the list to the bottom and confirm all seven show a resource chip before you leave this dialog.
+                  </AlertDescription>
+                </Alert>
+              </WorkshopCard>
+            )}
+
+            {visibleIds.has('run-one') && (
+              <WorkshopCard
+                completed={completed.has('run-one')}
+                onComplete={(checked) => toggleComplete('run-one', checked)}
+                section={sectionById('run-one')}
+              >
+                <div className="rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-5 sm:p-6">
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="max-w-xl">
+                      <Badge className="mb-3" variant="secondary">Baseline run</Badge>
+                      <h3 className="text-xl font-semibold">This run is supposed to be tedious.</h3>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                        The agent has no policy source and no category vocabulary yet, so it can find sensitive passages but cannot justify withholding any of them. Every statutory decision falls to you. Notice how that feels, and how long it takes.
+                      </p>
+                    </div>
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border bg-background text-primary shadow-sm">
+                      <Clock3 className="h-9 w-9" />
+                    </div>
+                  </div>
+                </div>
+                <Checklist items={steps.foiaRunOne} />
+                <div>
+                  <h3 className="mb-3 font-semibold">Reasonable picks for this document</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {['(b)(4) Commercial and Trade Secrets', '(b)(5) Inter/Intra-Agency Privileges', '(b)(9) Geological Data'].map(
+                      (code) => (
+                        <Badge key={code} variant="outline">
+                          {code}
+                        </Badge>
+                      ),
+                    )}
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    You are not being marked on this. Pick something defensible and move on - in step 7 the agent proposes these same three codes on its own, with a written rationale.
                   </p>
                 </div>
               </WorkshopCard>
             )}
 
-            {visibleIds.has('workflow') && (
+            {visibleIds.has('agent-context') && (
               <WorkshopCard
-                completed={completed.has('workflow')}
-                onComplete={(checked) => toggleComplete('workflow', checked)}
-                section={sectionById('workflow')}
+                completed={completed.has('agent-context')}
+                onComplete={(checked) => toggleComplete('agent-context', checked)}
+                section={sectionById('agent-context')}
               >
-                <Checklist items={steps.workflow} />
-                <div className="grid gap-4 lg:grid-cols-2">
-                  <ScreenshotFigure
-                    alt="Edit variable dialog for the name workflow variable"
-                    caption="Create the name variable and set its value to your name."
-                    src={workflowNameVariableImage}
-                  />
-                  <ScreenshotFigure
-                    alt="PII Review App task configuration and input mappings"
-                    caption="Select the Action App, set the task title, and map both inputs."
-                    src={workflowActionAppImage}
-                  />
-                </div>
-                <div className="grid gap-3 md:grid-cols-3">
-                  {[
-                    ['Task title', 'PII Review - @name'],
-                    ['FilesList', 'Map the file list output'],
-                    ['WordsToRedact', 'wordsToRedactList'],
-                  ].map(([label, value]) => (
-                    <div className="min-w-0 rounded-xl border bg-muted/25 p-4" key={label}>
-                      <p className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
-                      <p className="mt-2 break-words font-semibold" title={value}>
-                        {value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <Checklist items={steps.foiaContext} />
                 <Alert>
-                  <Users className="h-4 w-4" />
-                  <AlertTitle>Why the name variable matters</AlertTitle>
+                  <Circle className="h-4 w-4 fill-primary text-primary" />
+                  <AlertTitle>Grounding, not training</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    It makes your Action Center task easy to find when multiple workshop participants run the same process.
+                    Attaching an index does not retrain the model. At run time the agent retrieves the passages it needs from the DOJ policy documents and cites them, which is why the citations in step 7 carry a real index name and page number instead of a placeholder.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
             )}
 
-            {visibleIds.has('test-process') && (
+            {visibleIds.has('agent-classify') && (
               <WorkshopCard
-                completed={completed.has('test-process')}
-                onComplete={(checked) => toggleComplete('test-process', checked)}
-                section={sectionById('test-process')}
+                completed={completed.has('agent-classify')}
+                onComplete={(checked) => toggleComplete('agent-classify', checked)}
+                section={sectionById('agent-classify')}
               >
-                <Checklist items={steps.processTest} />
-                <ScreenshotFigure
-                  alt="Process debug entrypoint arguments with FOIA keywords"
-                  caption="Enter a search term and optional additional instructions for the end-to-end run."
-                  src={processTestInputImage}
-                />
+                <Checklist items={steps.foiaClassify} />
+                <Alert>
+                  <FileCheck2 className="h-4 w-4" />
+                  <AlertTitle>Why this gap exists</AlertTitle>
+                  <AlertDescription className="mt-1 leading-6">
+                    The <code>category</code> field is free text, so the model always writes something. It cannot guess an agency-specific vocabulary it was never given, so it invents a description instead. This is the one gap where a prompt is the only possible fix.
+                  </AlertDescription>
+                </Alert>
+              </WorkshopCard>
+            )}
+
+            {visibleIds.has('run-two') && (
+              <WorkshopCard
+                completed={completed.has('run-two')}
+                onComplete={(checked) => toggleComplete('run-two', checked)}
+                section={sectionById('run-two')}
+              >
+                <Checklist items={steps.foiaRunTwo} />
                 <div>
-                  <h3 className="mb-3 font-semibold">Suggested search terms</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {['Dupree · 1 result', 'USPS · 1 result', 'FBI · 3 results', 'HHS · 5 results'].map((term) => (
-                      <Badge key={term} variant="outline">
-                        {term}
-                      </Badge>
+                  <h3 className="mb-3 font-semibold">Your vocabulary, mapped to statute</h3>
+                  <p className="mb-3 text-sm leading-6 text-muted-foreground">
+                    The six categories you authored in step 6 line up with the exemption families the grounded agent proposes here. This is where the two halves of the workshop meet.
+                  </p>
+                  <div className="overflow-hidden rounded-xl border">
+                    {categoryExemptionMap.map((row, index) => (
+                      <div
+                        className={`flex flex-col gap-1 p-3 sm:flex-row sm:items-center sm:justify-between ${
+                          index % 2 === 1 ? 'bg-muted/25' : ''
+                        }`}
+                        key={row.category}
+                      >
+                        <span className="font-semibold">{row.category}</span>
+                        <span className="font-mono text-sm text-muted-foreground">{row.exemption}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
-                <CopyBlock label="Example additional instructions" value="also redact any medications." />
-              </WorkshopCard>
-            )}
-
-            {visibleIds.has('review') && (
-              <WorkshopCard
-                completed={completed.has('review')}
-                onComplete={(checked) => toggleComplete('review', checked)}
-                section={sectionById('review')}
-              >
-                <div className="rounded-2xl border bg-gradient-to-br from-primary/10 via-background to-background p-5 sm:p-6">
-                  <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="max-w-xl">
-                      <Badge className="mb-3" variant="secondary">Human-in-the-loop checkpoint</Badge>
-                      <h3 className="text-xl font-semibold">The agent proposes. A person decides.</h3>
-                      <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                        FOIA redaction can affect legal disclosure. The review task keeps the final decision with a human before the document is produced.
-                      </p>
-                    </div>
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border bg-background text-primary shadow-sm">
-                      <Users className="h-9 w-9" />
-                    </div>
-                  </div>
-                </div>
-                <Checklist items={steps.review} />
-                <div className="grid gap-4 lg:grid-cols-2">
-                  <ScreenshotFigure
-                    alt="Document Redaction review task with proposed words to redact"
-                    caption="Review the proposed values against the source document before submitting."
-                    src={processTestRunImage}
-                  />
-                  <ScreenshotFigure
-                    alt="Example FOIA document after PII redaction"
-                    caption="Example of a completed document with the selected PII removed."
-                    src={redactedDocumentImage}
-                  />
-                </div>
-              </WorkshopCard>
-            )}
-
-            {visibleIds.has('download') && (
-              <WorkshopCard
-                completed={completed.has('download')}
-                onComplete={(checked) => toggleComplete('download', checked)}
-                section={sectionById('download')}
-              >
-                <Checklist items={steps.download} />
-                <div className="grid gap-4">
-                  <ScreenshotFigure
-                    alt="Redaction Agent output containing redactedDocsSBPath filenames"
-                    caption="Copy a filename from redactedDocsSBPath after the process completes."
-                    src={orchestratorPathImage}
-                  />
-                  <ScreenshotFigure
-                    alt="Orchestrator Storage Buckets page in the Workshop FOIA Resources folder"
-                    caption="Open FOIA_Package_release_Folder from the workshop resources folder."
-                    src={storageBucketImage}
-                  />
-                </div>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="min-w-0 rounded-xl border bg-muted/25 p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">Storage bucket</p>
-                    <p className="mt-2 break-words font-semibold">FOIA_Package_release_Folder</p>
-                  </div>
-                  <div className="min-w-0 rounded-xl border bg-muted/25 p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground">Wildcard example</p>
-                    <p className="mt-2 break-all font-mono text-sm font-semibold">REDACTED_db66e7c6-f738-4a86-8d5c-bdb6e9ece2ea*</p>
-                  </div>
-                </div>
+                <Alert>
+                  <Users className="h-4 w-4" />
+                  <AlertTitle>The person still decides</AlertTitle>
+                  <AlertDescription className="mt-1 leading-6">
+                    Nothing here removed the human. The agent went from proposing passages to proposing passages, categories, statutory codes and citations, and a reviewer still approved every redaction before the document was produced. What changed is how much of the reviewer time went into clerical work.
+                  </AlertDescription>
+                </Alert>
                 {progress >= 100 && (
                   <Alert>
                     <CheckCircle2 className="h-4 w-4" />
                     <AlertTitle>Workshop complete</AlertTitle>
                     <AlertDescription className="mt-1 leading-6">
-                      You have configured the agent, connected human review, run the process, and retrieved the final redacted document.
+                      You routed the work to yourself, ran a FOIA redaction end to end by hand, gave the agent a policy source and a vocabulary, and produced the same document again with the clerical work removed.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -1451,7 +1684,7 @@ export default function App() {
                 <CardContent>
                   <Search className="mx-auto h-8 w-8 text-muted-foreground" />
                   <h2 className="mt-4 text-lg font-semibold">No workshop steps found</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Try a term like “prompt,” “debug,” “workflow,” or “download.”</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Try a term like “prompt,” “debug,” “autopilot,” or “assignee.”</p>
                   <Button className="mt-5" onClick={() => setSearchTerm('')} variant="outline">
                     Clear search
                   </Button>

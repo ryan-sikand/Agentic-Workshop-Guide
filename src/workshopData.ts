@@ -9,7 +9,13 @@ export type WorkshopSection = {
   shortTitle: string
   description: string
   duration: string
-  group: 'Start here' | 'Extract the data' | 'Build the agent' | 'Build the workflow' | 'Run and review'
+  group:
+    | 'Start here'
+    | 'Extract the data'
+    | 'Set up the solution'
+    | 'Run it by hand'
+    | 'Teach the agent'
+    | 'Run it again'
   brandIcon: BrandIconComponent
   searchTerms: string
 }
@@ -79,107 +85,83 @@ export const workshopSections: WorkshopSection[] = [
     step: 1,
     title: 'Create your workshop solution',
     shortTitle: 'Project setup',
-    description: 'Create a solution from the FOIA template and give it a unique name.',
-    duration: '7 min',
-    group: 'Build the agent',
+    description: 'Copy the finished FOIA template into your own workspace and name it.',
+    duration: '5 min',
+    group: 'Set up the solution',
     brandIcon: brandIcons.create,
-    searchTerms: 'studio template foia solution rename workspace',
+    searchTerms: 'studio templates agentic foia redaction workshop template v2 new solution from template rename workspace bpmn explorer',
   },
   {
-    id: 'pii-agent',
+    id: 'review-routing',
     part: 'FOIA redaction',
     step: 2,
-    title: 'Configure the PII agent',
-    shortTitle: 'PII agent',
-    description: 'Set the role, detection rules, work steps, and strict output contract.',
-    duration: '15 min',
-    group: 'Build the agent',
-    brandIcon: brandIcons.agent,
-    searchTerms: 'system prompt user prompt autopilot pii personal information output schema json',
+    title: 'Route the work to yourself',
+    shortTitle: 'Review routing',
+    description: 'Create the assignee variable, bind both review tasks, and set the email recipients.',
+    duration: '12 min',
+    group: 'Set up the solution',
+    brandIcon: brandIcons.tasks,
+    searchTerms: 'data manager variables reviewAssignee process scope recipientEmails array start event input assignee assignment criteria user bind both review nodes tenant account personal mailbox',
   },
   {
-    id: 'tools',
+    id: 'solution-resources',
     part: 'FOIA redaction',
     step: 3,
-    title: 'Connect the storage tool',
-    shortTitle: 'Storage tool',
-    description: 'Give the agent one safe path to retrieve each workshop document.',
-    duration: '6 min',
-    group: 'Build the agent',
+    title: 'Map the solution resources',
+    shortTitle: 'Solution resources',
+    description: 'Point every resource the solution declares at its live counterpart in Shared.',
+    duration: '8 min',
+    group: 'Set up the solution',
     brandIcon: brandIcons.tool,
-    searchTerms: 'get file from storage storage bucket out_pdfTxt tool description solution folder',
+    searchTerms: 'debug configuration solution resources apps storage buckets connections processes task catalogs shared deploy resources before debugging entrypoint arguments documentSearchTerm geothermal',
   },
   {
-    id: 'data-manager',
+    id: 'run-one',
     part: 'FOIA redaction',
     step: 4,
-    title: 'Check the data contract',
-    shortTitle: 'Data Manager',
-    description: 'Verify inputs and add the PII summary field to the output schema.',
-    duration: '7 min',
-    group: 'Build the agent',
-    brandIcon: brandIcons.schema,
-    searchTerms: 'data manager inputs outputs documents additionalInstructions piiSummary schema required array',
+    title: 'Run it once, the hard way',
+    shortTitle: 'Run 1 by hand',
+    description: 'Debug the full process and pick every statutory exemption yourself.',
+    duration: '18 min',
+    group: 'Run it by hand',
+    brandIcon: brandIcons.process,
+    searchTerms: 'debug run execution trail guidance unavailable amber banner add authority exemption dropdown b4 b5 b9 confirm redaction greyed out need authority review final redaction review approve final document',
   },
   {
-    id: 'test-agent',
+    id: 'agent-context',
     part: 'FOIA redaction',
     step: 5,
-    title: 'Debug the agent',
-    shortTitle: 'Test the agent',
-    description: 'Run the agent against two sample files before wiring the full process.',
+    title: 'Give the agent its policy source',
+    shortTitle: 'Attach the context',
+    description: 'Attach the DOJ guidance index so the agent can cite real policy.',
     duration: '8 min',
-    group: 'Build the agent',
-    brandIcon: brandIcons.debug,
-    searchTerms: 'debug test profile shared resources entrypoint arguments sample documents biometric',
+    group: 'Teach the agent',
+    brandIcon: brandIcons.schema,
+    searchTerms: 'pii agent definition canvas context grounding indexes doj foia redaction guidance semantic strategy new context data fabric entities attach index resource slot',
   },
   {
-    id: 'workflow',
+    id: 'agent-classify',
     part: 'FOIA redaction',
     step: 6,
-    title: 'Map the agentic workflow',
-    shortTitle: 'Workflow mapping',
-    description: 'Connect the redaction agent to a named human review task.',
-    duration: '10 min',
-    group: 'Build the workflow',
-    brandIcon: brandIcons.flowchart,
-    searchTerms: 'agentic workflow name variable action app task title files list words to redact mapping',
+    title: 'Teach the agent your vocabulary',
+    shortTitle: 'Finding classification',
+    description: 'Use Autopilot to add a fixed category list to the system prompt.',
+    duration: '12 min',
+    group: 'Teach the agent',
+    brandIcon: brandIcons.agent,
+    searchTerms: 'autopilot open autopilot system prompt finding classification commercial deliberative personal law enforcement geological other category field rules accept reject rationale',
   },
   {
-    id: 'test-process',
+    id: 'run-two',
     part: 'FOIA redaction',
     step: 7,
-    title: 'Debug the complete process',
-    shortTitle: 'Test the process',
-    description: 'Search for FOIA documents and run the complete end-to-end workflow.',
-    duration: '8 min',
-    group: 'Run and review',
-    brandIcon: brandIcons.process,
-    searchTerms: 'process debug foia keywords Dupree USPS FBI HHS medications',
-  },
-  {
-    id: 'review',
-    part: 'FOIA redaction',
-    step: 8,
-    title: 'Review proposed redactions',
-    shortTitle: 'Human review',
-    description: 'Validate the agent findings before the redacted document is finalized.',
-    duration: '8 min',
-    group: 'Run and review',
+    title: 'Run it again and see the difference',
+    shortTitle: 'Run 2 and review',
+    description: 'The same document, now with clean categories, proposed codes, and citations.',
+    duration: '15 min',
+    group: 'Run it again',
     brandIcon: brandIcons.approved,
-    searchTerms: 'review app human in the loop action center approve validate redaction',
-  },
-  {
-    id: 'download',
-    part: 'FOIA redaction',
-    step: 9,
-    title: 'Find the redacted document',
-    shortTitle: 'Download result',
-    description: 'Use the storage path from the process output to download the result.',
-    duration: '5 min',
-    group: 'Run and review',
-    brandIcon: brandIcons.download,
-    searchTerms: 'orchestrator storage buckets redactedDocsSBPath download wildcard exact search',
+    searchTerms: 'hybrid detection banner clean category pills agent default statutory label policy evidence confidence approve final document email package redacted pdf inbox attachment',
   },
 ]
 
@@ -203,78 +185,74 @@ export const totalDurationMinutes =
     workshopSections.reduce((total, section) => total + (Number.parseInt(section.duration, 10) || 0), 0) / 5,
   ) * 5
 
-export const systemPrompt = `## Role
-You are a PII Redaction Agent. Your sole purpose is to analyze a list of documents, detect all Personally Identifiable Information (PII), and return structured findings for each document.
+export const autopilotPrompt = `Add a section to the system prompt called Finding Classification. Require every finding to use exactly one category from this list: Commercial, Deliberative, Personal, Law Enforcement, Geological, Other. Define each briefly in FOIA terms. Require the exact label only, with no extra words - the reasoning belongs in rationale, not category.`
 
-## Tool Rules
+// Fallback for a stuck attendee, and the answer key for the instructor. This is
+// what Autopilot produced from the request above, so a hand-paste and an
+// accepted suggestion leave the prompt in the same state.
+export const findingClassificationSection = `## Finding Classification
+Every finding must carry exactly one category value, chosen from this fixed list:
+- Commercial: Confidential or trade-secret-like business, financial, or proprietary information whose disclosure could cause competitive harm (aligned with FOIA Exemption 4 concerns).
+- Deliberative: Pre-decisional opinions, drafts, recommendations, or internal discussions reflecting agency deliberation before a final decision (aligned with FOIA Exemption 5 concerns).
+- Personal: Information whose disclosure would constitute an unwarranted invasion of personal privacy for an individual (aligned with FOIA Exemption 6/7(C) concerns).
+- Law Enforcement: Information compiled for law-enforcement purposes, including investigative techniques, ongoing proceedings, or records that could interfere with enforcement activity (aligned with FOIA Exemption 7 concerns).
+- Geological: Geological or geophysical information and data, including maps, concerning wells (aligned with FOIA Exemption 9 concerns).
+- Other: Any sensitive finding that is supported by document text and guidance or supplemental evidence but does not fit Commercial, Deliberative, Personal, Law Enforcement, or Geological.
 
-### Get File From Storage
-- Call this once per document.
-- Pass \`fileStoragePath\` set to the \`StorageLocation\` value from the document object.
-- The tool returns \`result.out_pdfTxt\` — the full extracted text of the document. Use this text directly for PII analysis.
-- Do not call any other tool after this. Perform PII detection directly on \`result.out_pdfTxt\`.
+Category field rules:
+- The category value must be exactly one of: Commercial, Deliberative, Personal, Law Enforcement, Geological, Other. Use this exact spelling and casing, with no extra words, punctuation, qualifiers, or combined labels.
+- Never put reasoning, exemption codes, or explanations in category. All reasoning, justification, and nuance belongs in rationale, not category.
+- Choose the single best-fitting category. If more than one could plausibly apply, pick the closest match and explain the ambiguity in rationale rather than listing multiple categories.`
 
-## PII Categories to Detect
-Find ALL of the following in the extracted text and record each instance:
-- Full names (first, last, or full)
-- Email addresses
-- Phone numbers (any format)
-- Social Security Numbers (SSN) / National ID numbers
-- Dates of birth
-- Physical or mailing addresses
-- Credit card or bank account numbers
-- Passport or driver's license numbers
-- IP addresses
-- URLs containing personal identifiers
-- Medical record numbers or health information
-- Usernames or user IDs that identify a real person
-- Salary, compensation, or financial figures tied to an individual
-- Any other data that could uniquely identify an individual
+// recipientEmails is Array<String>, so each element is treated as an address on
+// its own. A bare display name as its own element fails the send.
+export const recipientEmailsExample = `[
+  "lewis.bell@uipath.com",
+  "your.email@here.com"
+]`
 
-## Work Steps
-For each document in the input \`documents\` list:
-1. Read the \`StorageLocation\` field from the document object.
-2. Call Get File From Storage with \`fileStoragePath\` set to \`StorageLocation\`. Wait for the result.
-3. Read \`result.out_pdfTxt\` — this is the full document text.
-4. Scan the text for every PII instance across all categories above.
-5. For each PII instance found, record its exact original value and its category.
-6. Build the document output: \`OriginalURL\`, \`StorageLocation\`, and a \`PIIFindings\` array of \`{ Value, Type }\`.
-7. Repeat steps 1–6 for each remaining document.
-8. Compile all findings into \`documentWithPIIFindings\`, a deduplicated \`piiSummary\`, and \`totalPiiFound\`.
-9. Build \`wordsToRedactList\`: for each document, join all PII \`Value\` strings for that document using a pipe \`|\` as the delimiter. Never use commas because PII values can contain commas. Keep one string per file, aligned by index with \`sbFilePaths\`.
+// The two identities an attendee has to keep apart. The tenant account has no
+// mailbox, so it can hold an Action Center task but can never receive the email.
+export const identityRows: { field: string; value: string; why: string }[] = [
+  {
+    field: 'reviewAssignee',
+    value: 'your provisioned tenant account',
+    why: 'Receives both Action Center review tasks. Has no mailbox.',
+  },
+  {
+    field: 'recipientEmails',
+    value: 'your real personal or work address',
+    why: 'Receives the final email with the redacted PDF attached.',
+  },
+]
 
-## Output Rules
-Return ONLY JSON matching \`outputSchema\` exactly. No extra keys, markdown, or explanatory text.
-- \`documentWithPIIFindings\`: array with \`OriginalURL\`, \`StorageLocation\`, and \`PIIFindings\` (array of \`{ Value, Type }\`)
-- \`piiSummary\`: deduplicated array of PII category names found, including only categories with at least one instance
-- \`totalPiiFound\`: total integer count of all PII instances across all documents
-- \`wordsToRedactList\`: one pipe-delimited string per file
-- \`fileList\`: list of file objects to redact
+// Exemption families the grounded agent proposes in step 7, against the
+// vocabulary the attendee authors in step 6. This mapping is the payoff.
+export const categoryExemptionMap: { category: string; exemption: string }[] = [
+  { category: 'Commercial', exemption: '(b)(4)' },
+  { category: 'Deliberative', exemption: '(b)(5)' },
+  { category: 'Personal', exemption: '(b)(6), (b)(7)(C)' },
+  { category: 'Law Enforcement', exemption: '(b)(7)(A)-(F)' },
+  { category: 'Geological', exemption: '(b)(9)' },
+]
 
-## Final Reminder
-Call Get File From Storage → read \`result.out_pdfTxt\` → scan for PII → join values with \`|\` into \`wordsToRedactList\` → return strict JSON matching \`outputSchema\`.`
-
-export const autopilotPrompt = `Update the user prompt for a PII analysis agent. The agent receives a list of documents and optional additional instructions. For each document, it should call the Get File From Storage tool using the document's StorageLocation as the fileStoragePath, then read result.out_pdfTxt to get the extracted text, scan it for all PII instances, and repeat for every document. Use {{documents}} and {{additionalInstructions}} as input variables. End with a strict rule to return only valid JSON matching the outputSchema — no markdown, no explanation, no extra keys.`
-
-export const agentTestInput = `{
-  "documents": [
-    "{\\"StorageLocation\\":\\"014b6d15-47df-4a27-930b-fe3505bc5acb/MEMO_2024_004_FBI_ConsultationProcedure.pdf\\"}",
-    "{\\"StorageLocation\\":\\"003a58d5-9a68-4e65-a539-fbb22e11e44d/VA_MED_2024_004_Dupree_Oncology_FormatI_SOAP.pdf\\"}"
-  ],
-  "additionalInstructions": "also redact any biometric identifiers and keep organizational unit names visible"
-}`
-
-export const toolDescription = `Downloads a file from a UiPath Storage Bucket. Call this once per document with fileStoragePath set to the document's StorageLocation. Read the full extracted document text from result.out_pdfTxt and perform PII analysis directly on that text.`
-
-export const piiSummaryDescription =
-  'A list of PII categories that were detected and redacted from the document. Only include categories where at least one instance was found.'
+export const solutionResourceRows: { kind: string; resource: string }[] = [
+  { kind: 'App', resource: 'pubsec-advredaction-review-v2' },
+  { kind: 'Storage bucket', resource: 'DOJ FOIA Redaction Guidance Docs' },
+  { kind: 'Connection', resource: 'uipathlabs@gmail.com' },
+  { kind: 'Process', resource: 'FOIA Localization' },
+  { kind: 'Process', resource: 'Redaction Workflow' },
+  { kind: 'Process', resource: 'Search and Retrieval' },
+  { kind: 'Task catalog', resource: 'FOIA Catalog' },
+]
 
 export const groups = [
   'Start here',
   'Extract the data',
-  'Build the agent',
-  'Build the workflow',
-  'Run and review',
+  'Set up the solution',
+  'Run it by hand',
+  'Teach the agent',
+  'Run it again',
 ] as const
 
 // Each part runs its own step count, so the navigation has to say which part a
@@ -282,7 +260,10 @@ export const groups = [
 export const workshopParts: { title: WorkshopPart | null; groups: readonly (typeof groups)[number][] }[] = [
   { title: null, groups: ['Start here'] },
   { title: 'Document Understanding', groups: ['Extract the data'] },
-  { title: 'FOIA redaction', groups: ['Build the agent', 'Build the workflow', 'Run and review'] },
+  {
+    title: 'FOIA redaction',
+    groups: ['Set up the solution', 'Run it by hand', 'Teach the agent', 'Run it again'],
+  },
 ]
 
 export const workflowTracks: {
