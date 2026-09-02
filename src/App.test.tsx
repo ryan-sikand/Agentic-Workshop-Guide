@@ -24,6 +24,15 @@ async function openLab(user: ReturnType<typeof userEvent.setup>, tab: (typeof LA
   })
 }
 
+// Overviews start folded on the home page, so their body has to be opened before
+// anything inside them can be asserted on.
+async function expandSection(user: ReturnType<typeof userEvent.setup>, heading: string) {
+  await user.click(screen.getByRole('button', { name: heading }))
+  await waitFor(() => {
+    expect(screen.getByRole('button', { name: heading })).toBeInTheDocument()
+  })
+}
+
 describe('Agentic Redaction Workshop', () => {
   afterEach(cleanup)
 
@@ -31,7 +40,8 @@ describe('Agentic Redaction Workshop', () => {
     localStorage.clear()
   })
 
-  it('renders the home page, both lab overviews, and the resource links', () => {
+  it('renders the home page, both lab overviews, and the resource links', async () => {
+    const user = userEvent.setup()
     renderApp()
 
     expect(screen.getAllByAltText('UiPath logo')).not.toHaveLength(0)
@@ -56,6 +66,10 @@ describe('Agentic Redaction Workshop', () => {
       'https://www.uipath.com/',
     )
     expect(screen.queryByText('Open Staging')).not.toBeInTheDocument()
+
+    await expandSection(user, 'Automated SF Processing overview')
+    await expandSection(user, 'Agentic FOIA Redaction overview')
+
     // Both overviews carry the account block, so the join link appears once each.
     expect(screen.getAllByRole('link', { name: /Join the workshop/ })).toHaveLength(2)
     expect(screen.getAllByRole('link', { name: /Join the workshop/ })[0]).toHaveAttribute(
@@ -68,6 +82,33 @@ describe('Agentic Redaction Workshop', () => {
       'href',
       'https://uipathlabstraining.uipath.host/foia-reading-room',
     )
+  })
+
+  it('starts the home page with both lab overviews folded', () => {
+    renderApp()
+
+    expect(screen.getByRole('heading', { name: 'Agentic FOIA Redaction overview' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Open Lab 2/ })).not.toBeInTheDocument()
+  })
+
+  it('folds the cards from the icon control, separately from the outline', async () => {
+    const user = userEvent.setup()
+    renderApp()
+    await openLab(user, '2. Agentic FOIA Redaction')
+
+    expect(screen.getByText('Rename your copy')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Collapse all steps' }))
+    await waitFor(() => {
+      expect(screen.queryByText('Rename your copy')).not.toBeInTheDocument()
+    })
+    // The outline is untouched by the card control.
+    expect(screen.getAllByRole('button', { name: '1. Project setup' })).not.toHaveLength(0)
+
+    await user.click(screen.getByRole('button', { name: 'Expand all steps' }))
+    await waitFor(() => {
+      expect(screen.getByText('Rename your copy')).toBeInTheDocument()
+    })
   })
 
   it('keeps the guided steps off the home page', () => {
@@ -141,6 +182,7 @@ describe('Agentic Redaction Workshop', () => {
     const user = userEvent.setup()
     renderApp()
 
+    await expandSection(user, 'Agentic FOIA Redaction overview')
     await user.click(screen.getByRole('button', { name: /Open Lab 2/ }))
 
     await waitFor(() => {

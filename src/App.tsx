@@ -7,6 +7,8 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronsDownUp,
+  ChevronsUpDown,
   Circle,
   Clock3,
   ExternalLink,
@@ -812,6 +814,158 @@ function screenshotSize(src: string) {
   )
 }
 
+// A stand-in for the Maestro canvas the attendee is about to open: same six
+// stages, same left-to-right run, drawn rather than screenshotted so the labels
+// stay sharp and the actor of each stage can be called out. Deliberately dark in
+// both themes - it is a picture of a dark design surface, and the Studio captures
+// around it are dark too.
+const PIPELINE_GEOMETRY = { nodeWidth: 132, nodeHeight: 62, spacing: 172, firstX: 66, midY: 88 }
+
+function MaestroPipelineDiagram() {
+  const { nodeWidth, nodeHeight, spacing, firstX, midY } = PIPELINE_GEOMETRY
+  const nodeY = midY - nodeHeight / 2
+  const nodes = foiaPipeline.map((entry, index) => ({ ...entry, x: firstX + index * spacing }))
+  const lastRight = firstX + (nodes.length - 1) * spacing + nodeWidth
+  const endCx = lastRight + 37
+  const width = endCx + 45
+
+  return (
+    <div>
+      <h3 className="mb-3 font-semibold">What the workflow does</h3>
+      <div className="overflow-x-auto rounded-xl border bg-[#111a24]">
+        <svg
+          aria-label={`Six stage workflow: ${foiaPipeline
+            .map((entry) => `${entry.stage}, run by ${entry.actor.toLowerCase()}`)
+            .join('; then ')}.`}
+          className="block h-auto w-full min-w-[940px]"
+          role="img"
+          viewBox={`0 0 ${width} 176`}
+        >
+          <defs>
+            <pattern height="18" id="foia-canvas-grid" patternUnits="userSpaceOnUse" width="18">
+              <circle cx="1" cy="1" fill="#1d2a38" r="1" />
+            </pattern>
+            <marker
+              id="foia-arrow"
+              markerHeight="6"
+              markerWidth="6"
+              orient="auto"
+              refX="5"
+              refY="3"
+              viewBox="0 0 6 6"
+            >
+              <path d="M0 0 L6 3 L0 6 z" fill="#5a6e85" />
+            </marker>
+          </defs>
+
+          <rect fill="url(#foia-canvas-grid)" height="176" width={width} x="0" y="0" />
+
+          {/* start */}
+          <circle cx="30" cy={midY} fill="#111a24" r="15" stroke="#5a6e85" strokeWidth="2" />
+          <text fill="#8fa0b5" fontSize="10" textAnchor="middle" x="30" y={midY + 34}>
+            Start
+          </text>
+
+          {/* connectors */}
+          {nodes.map((node, index) => {
+            const from = index === 0 ? 45 : node.x - (spacing - nodeWidth)
+            return (
+              <line
+                key={`edge-${node.stage}`}
+                markerEnd="url(#foia-arrow)"
+                stroke="#5a6e85"
+                strokeWidth="1.5"
+                x1={from}
+                x2={node.x - 6}
+                y1={midY}
+                y2={midY}
+              />
+            )
+          })}
+          <line
+            markerEnd="url(#foia-arrow)"
+            stroke="#5a6e85"
+            strokeWidth="1.5"
+            x1={lastRight}
+            x2={endCx - 21}
+            y1={midY}
+            y2={midY}
+          />
+
+          {/* stages */}
+          {nodes.map((node, index) => {
+            const human = node.actor === 'Human'
+            return (
+              <g key={node.stage}>
+                <rect
+                  fill="#1b2532"
+                  height={nodeHeight}
+                  rx="10"
+                  stroke={human ? '#e0a458' : '#33455a'}
+                  strokeWidth={human ? '2' : '1.5'}
+                  width={nodeWidth}
+                  x={node.x}
+                  y={nodeY}
+                />
+                <rect
+                  fill={human ? '#b8752c' : '#2f6fd0'}
+                  height="18"
+                  rx="5"
+                  width="18"
+                  x={node.x + 12}
+                  y={nodeY + 12}
+                />
+                <text
+                  fill="#ffffff"
+                  fontSize="11"
+                  fontWeight="700"
+                  textAnchor="middle"
+                  x={node.x + 21}
+                  y={nodeY + 25}
+                >
+                  {index + 1}
+                </text>
+                <text fill="#e8eef7" fontSize="13" fontWeight="600" x={node.x + 38} y={nodeY + 26}>
+                  {node.stage}
+                </text>
+                <text
+                  fill={human ? '#e0a458' : '#8fa0b5'}
+                  fontSize="9.5"
+                  letterSpacing="0.08em"
+                  x={node.x + 12}
+                  y={nodeY + 47}
+                >
+                  {node.actor.toUpperCase()}
+                </text>
+              </g>
+            )
+          })}
+
+          {/* end */}
+          <circle cx={endCx} cy={midY} fill="#111a24" r="15" stroke="#7fbf9a" strokeWidth="3" />
+          <text fill="#8fa0b5" fontSize="10" textAnchor="middle" x={endCx} y={midY + 34}>
+            Delivered
+          </text>
+        </svg>
+      </div>
+      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+        The amber stage is the one a person does. Everything either side of it is automated, and the run
+        stops and waits at that stage until someone approves.
+      </p>
+      <dl className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
+        {foiaPipeline.map((entry, index) => (
+          <div key={entry.stage}>
+            <dt className="text-sm font-semibold">
+              {index + 1}. {entry.stage}
+            </dt>
+            <dd className="mt-0.5 text-sm leading-6 text-muted-foreground">{entry.detail}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
 // Marks where one group of steps ends and the next begins, so a long lab reads
 // as a few phases rather than one undifferentiated run of cards.
 function GroupDivider({ label, show }: { label: string; show: boolean }) {
@@ -1070,9 +1224,16 @@ function WorkshopCard({
                     Lab {labNumber(section.lab)} · {section.group}
                   </Badge>
                   {section.step && <Badge variant="secondary">Step {section.step}</Badge>}
+                  {/* An overview is something you read, and its card also carries how
+                      long the lab behind it takes. A step is something you do, so its
+                      duration is the doing time and nothing else. */}
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock3 className="h-3.5 w-3.5" /> {section.duration}
+                    {section.step === undefined && ' read'}
                   </span>
+                  {section.step === undefined && (
+                    <Badge variant="secondary">Lab takes about {durationForLab(section.lab)} min</Badge>
+                  )}
                 </div>
                 <h2 className="text-xl font-semibold leading-tight tracking-tight sm:text-2xl">
                   <CollapsibleTrigger asChild>
@@ -1159,7 +1320,11 @@ export default function App() {
     items: { src: string; alt: string; caption: string }[]
     index: number
   } | null>(null)
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set())
+  // The home page leads with the lab cards, so each lab's overview starts folded
+  // away rather than filling the first two screens with prose.
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    () => new Set(workshopSections.filter((section) => section.step === undefined).map((section) => section.id)),
+  )
   const [pendingScroll, setPendingScroll] = useState<{ id: string; smooth: boolean } | null>(null)
 
   const normalizedSearch = searchTerm.trim().toLowerCase()
@@ -1191,10 +1356,26 @@ export default function App() {
     }),
     [collapsedSections],
   )
-  const allExpanded = collapsedSections.size === 0
+  // Two separate controls, because they own different things: the sidebar button
+  // folds the outline trees, the icon button by the cards folds the cards.
+  const allOutlinesOpen = collapsedLabs.size === 0
 
-  function toggleAllSections() {
-    setCollapsedSections(allExpanded ? new Set(workshopSections.map((section) => section.id)) : new Set())
+  function toggleAllOutlines() {
+    setCollapsedLabs(allOutlinesOpen ? new Set(workshopLabs.map((entry) => entry.lab)) : new Set())
+  }
+
+  const visibleAllExpanded =
+    visibleSections.length > 0 && visibleSections.every((section) => !collapsedSections.has(section.id))
+
+  function toggleVisibleSections() {
+    setCollapsedSections((current) => {
+      const next = new Set(current)
+      for (const section of visibleSections) {
+        if (visibleAllExpanded) next.add(section.id)
+        else next.delete(section.id)
+      }
+      return next
+    })
   }
 
   const visibleIds = useMemo(() => new Set(visibleSections.map((section) => section.id)), [visibleSections])
@@ -1509,8 +1690,8 @@ export default function App() {
                 value={searchTerm}
               />
             </div>
-            <Button className="mb-5 w-full" onClick={toggleAllSections} size="sm" variant="outline">
-              {allExpanded ? 'Collapse all steps' : 'Expand all steps'}
+            <Button className="mb-5 w-full" onClick={toggleAllOutlines} size="sm" variant="outline">
+              {allOutlinesOpen ? 'Collapse outline' : 'Expand outline'}
             </Button>
             {nav}
           </div>
@@ -1528,14 +1709,14 @@ export default function App() {
           >
             <PanelLeftClose className="h-4 w-4" /> Hide outline
           </Button>
-          <Button className="mb-5 w-full" onClick={toggleAllSections} size="sm" variant="outline">
-            {allExpanded ? (
+          <Button className="mb-5 w-full" onClick={toggleAllOutlines} size="sm" variant="outline">
+            {allOutlinesOpen ? (
               <>
-                <ChevronRight className="h-3.5 w-3.5" /> Collapse all steps
+                <ChevronRight className="h-3.5 w-3.5" /> Collapse outline
               </>
             ) : (
               <>
-                <ChevronDown className="h-3.5 w-3.5" /> Expand all steps
+                <ChevronDown className="h-3.5 w-3.5" /> Expand outline
               </>
             )}
           </Button>
@@ -1685,6 +1866,23 @@ export default function App() {
           )}
 
           <div className="w-full space-y-8 px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
+            {visibleSections.length > 0 && (
+              <div className="flex items-center justify-end">
+                <Button
+                  aria-label={visibleAllExpanded ? 'Collapse all steps' : 'Expand all steps'}
+                  onClick={toggleVisibleSections}
+                  size="icon"
+                  title={visibleAllExpanded ? 'Collapse all steps' : 'Expand all steps'}
+                  variant="outline"
+                >
+                  {visibleAllExpanded ? (
+                    <ChevronsDownUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronsUpDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            )}
             <div className="relative lg:hidden">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -1847,25 +2045,7 @@ export default function App() {
                   This track hands you that process already built as a Maestro workflow, with an agent doing the
                   reading and a person keeping the decisions.
                 </p>
-                <div>
-                  <h3 className="mb-3 font-semibold">What the workflow does</h3>
-                  <div className="overflow-hidden rounded-xl border">
-                    {foiaPipeline.map((row, index) => (
-                      <div
-                        className={`flex gap-4 p-4 ${index % 2 === 1 ? 'bg-muted/25' : ''}`}
-                        key={row.stage}
-                      >
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                          {index + 1}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="font-semibold">{row.stage}</p>
-                          <p className="mt-1 text-sm leading-6 text-muted-foreground">{row.detail}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <MaestroPipelineDiagram />
                 <Alert>
                   <FileCheck2 className="h-4 w-4" />
                   <AlertTitle>What you will actually change</AlertTitle>

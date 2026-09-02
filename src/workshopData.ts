@@ -132,7 +132,7 @@ export const workshopSections: WorkshopSection[] = [
     lab: 'Agentic FOIA Redaction',
     step: 4,
     title: 'Run it once, the hard way',
-    shortTitle: 'Run 1 by hand',
+    shortTitle: 'Run 1: Manual',
     description: 'Debug the full process and pick every statutory exemption yourself.',
     duration: '18 min',
     group: 'Run it by hand',
@@ -168,7 +168,7 @@ export const workshopSections: WorkshopSection[] = [
     lab: 'Agentic FOIA Redaction',
     step: 7,
     title: 'Run it again and see the difference',
-    shortTitle: 'Run 2 and review',
+    shortTitle: 'Run 2: Agent Proposed',
     description: 'The same document, now with clean categories, proposed codes, and citations.',
     duration: '15 min',
     group: 'Run it again',
@@ -190,34 +190,44 @@ export function sectionById(id: string): WorkshopSection {
   return section
 }
 
-export const foiaPipeline: { stage: string; detail: string }[] = [
+export const foiaPipeline: {
+  stage: string
+  actor: 'Automation' | 'Agent' | 'Human'
+  detail: string
+}[] = [
   {
     stage: 'Search',
+    actor: 'Automation',
     detail:
       'An automation searches the document repository for records matching the search term you supply.',
   },
   {
     stage: 'Analyze',
+    actor: 'Agent',
     detail:
       'An agent reads each document and proposes which passages should be withheld, with a rationale for each one.',
   },
   {
     stage: 'Localize',
+    actor: 'Automation',
     detail:
       'Each proposed passage is matched back to its exact position on the page, so a redaction can be placed on it.',
   },
   {
     stage: 'Review',
+    actor: 'Human',
     detail:
       'A person checks every proposed finding, assigns the statutory exemption that justifies withholding it, and approves or rejects.',
   },
   {
     stage: 'Redact',
+    actor: 'Automation',
     detail:
       'The approved redactions are burned into the PDF and then independently verified against the original.',
   },
   {
     stage: 'Deliver',
+    actor: 'Automation',
     detail: 'The redacted package is emailed to the requester, with the exemption code printed on every bar.',
   },
 ]
