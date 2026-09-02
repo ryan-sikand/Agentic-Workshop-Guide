@@ -210,6 +210,7 @@ export const duPipeline: {
 export const foiaPipeline: {
   stage: string
   actor: 'Automation' | 'Agent' | 'Human'
+  optional?: boolean
   detail: string
 }[] = [
   {
@@ -241,6 +242,13 @@ export const foiaPipeline: {
     actor: 'Automation',
     detail:
       'The approved redactions are burned into the PDF and then independently verified against the original.',
+  },
+  {
+    stage: 'Final review',
+    actor: 'Human',
+    optional: true,
+    detail:
+      'A second look at the redacted document itself, with the option to send it back for more redactions before it leaves the building.',
   },
   {
     stage: 'Deliver',

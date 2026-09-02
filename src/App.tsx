@@ -945,7 +945,7 @@ function DuPipelineDiagram() {
 // stay sharp and the actor of each stage can be called out. Deliberately dark in
 // both themes - it is a picture of a dark design surface, and the Studio captures
 // around it are dark too.
-const PIPELINE_GEOMETRY = { nodeWidth: 132, nodeHeight: 62, spacing: 172, firstX: 66, midY: 88 }
+const PIPELINE_GEOMETRY = { nodeWidth: 140, nodeHeight: 62, spacing: 180, firstX: 66, midY: 88 }
 
 function MaestroPipelineDiagram() {
   const { nodeWidth, nodeHeight, spacing, firstX, midY } = PIPELINE_GEOMETRY
@@ -960,8 +960,11 @@ function MaestroPipelineDiagram() {
       <h3 className="mb-3 font-semibold">What the workflow does</h3>
       <div className="overflow-x-auto rounded-xl border bg-[#111a24]">
         <svg
-          aria-label={`Six stage workflow: ${foiaPipeline
-            .map((entry) => `${entry.stage}, run by ${entry.actor.toLowerCase()}`)
+          aria-label={`${foiaPipeline.length} stage workflow: ${foiaPipeline
+            .map(
+              (entry) =>
+                `${entry.stage}, run by ${entry.actor.toLowerCase()}${entry.optional ? ', optional' : ''}`,
+            )
             .join('; then ')}.`}
           className="block h-auto w-full min-w-[940px]"
           role="img"
@@ -1028,6 +1031,7 @@ function MaestroPipelineDiagram() {
                   height={nodeHeight}
                   rx="10"
                   stroke={human ? '#e0a458' : '#33455a'}
+                  strokeDasharray={node.optional ? '5 3' : undefined}
                   strokeWidth={human ? '2' : '1.5'}
                   width={nodeWidth}
                   x={node.x}
@@ -1061,7 +1065,7 @@ function MaestroPipelineDiagram() {
                   x={node.x + 12}
                   y={nodeY + 47}
                 >
-                  {node.actor.toUpperCase()}
+                  {node.optional ? `${node.actor.toUpperCase()} · OPTIONAL` : node.actor.toUpperCase()}
                 </text>
               </g>
             )
@@ -1075,8 +1079,9 @@ function MaestroPipelineDiagram() {
         </svg>
       </div>
       <p className="mt-2 text-xs leading-5 text-muted-foreground">
-        The amber stage is the one a person does. Everything either side of it is automated, and the run
-        stops and waits at that stage until someone approves.
+        The amber stages are the ones a person does, and the run stops and waits at each of them until
+        someone approves. The dashed one is optional: a reviewer who is happy with the redacted document can
+        let it go straight out, or send it back for another pass.
       </p>
       <dl className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
         {foiaPipeline.map((entry, index) => (
