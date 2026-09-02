@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
   Check,
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Circle,
   Clock3,
@@ -12,6 +13,8 @@ import {
   FileCheck2,
   GraduationCap,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   RotateCcw,
   Search,
   Users,
@@ -37,7 +40,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@uipath/apollo-wind/components/ui/dialog'
 import { Input } from '@uipath/apollo-wind/components/ui/input'
 import {
@@ -107,21 +109,23 @@ import { workshopBranding } from './branding'
 import {
   autopilotPrompt,
   categoryExemptionMap,
-  durationForPart,
+  durationForLab,
   findingClassificationSection,
   foiaPipeline,
   identityRows,
+  labNumber,
+  labStages,
+  labSummaries,
+  overviewSectionForLab,
   progressSections,
   recipientEmailsExample,
   sectionById,
-  sectionsInPartGroup,
+  sectionsInLabGroup,
   solutionResourceRows,
-  stepsInPart,
-  trackSummaries,
-  workflowTracks,
-  workshopParts,
+  stepsInLab,
+  workshopLabs,
   workshopSections,
-  type WorkshopPart,
+  type WorkshopLab,
   type WorkshopSection,
 } from './workshopData'
 
@@ -132,6 +136,28 @@ const PROGRESS_KEY = 'agentic-redaction-workshop-progress'
 type SectionCollapseApi = {
   isOpen: (id: string) => boolean
   setOpen: (id: string, open: boolean) => void
+}
+
+type LabNavApi = { enterLab: (lab: WorkshopLab) => void }
+
+const LabNavContext = createContext<LabNavApi>({ enterLab: () => {} })
+
+type LightboxApi = { open: (trigger: HTMLElement) => void }
+
+// Every figure tags its trigger with data-lightbox-*, so the viewer can rebuild
+// the running order straight from the DOM at the moment it opens. Registering
+// figures on mount instead would mean keeping a list in sync with which cards are
+// expanded, filtered out, or on another tab; querying at open time cannot drift.
+const LightboxContext = createContext<LightboxApi>({ open: () => {} })
+
+export const LIGHTBOX_ITEM_SELECTOR = '[data-lightbox-src]'
+
+function readLightboxItems() {
+  return [...document.querySelectorAll<HTMLElement>(LIGHTBOX_ITEM_SELECTOR)].map((element) => ({
+    src: element.dataset.lightboxSrc ?? '',
+    alt: element.dataset.lightboxAlt ?? '',
+    caption: element.dataset.lightboxCaption ?? '',
+  }))
 }
 
 const SectionCollapseContext = createContext<SectionCollapseApi>({
@@ -786,6 +812,37 @@ function screenshotSize(src: string) {
   )
 }
 
+// Marks where one group of steps ends and the next begins, so a long lab reads
+// as a few phases rather than one undifferentiated run of cards.
+function GroupDivider({ label, show }: { label: string; show: boolean }) {
+  if (!show) return null
+  return (
+    <div className="flex items-center gap-4 pt-6 first:pt-0">
+      <span className="shrink-0 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </span>
+      <span className="h-px flex-1 bg-border" />
+    </div>
+  )
+}
+
+// The home page shows each lab's overview; this is how you leave it for the
+// guided steps.
+function EnterLabButton({ lab }: { lab: WorkshopLab }) {
+  const { enterLab } = useContext(LabNavContext)
+  const steps = stepsInLab(lab)
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-5">
+      <p className="text-sm leading-6 text-muted-foreground">
+        {steps.length} guided steps, about {durationForLab(lab)} minutes.
+      </p>
+      <Button onClick={() => enterLab(lab)}>
+        Open Lab {labNumber(lab)} <ArrowRight className="h-4 w-4" />
+      </Button>
+    </div>
+  )
+}
+
 // Both tracks stand alone, so both have to tell an attendee how to get an
 // account. Same block, rendered in each track's orientation section.
 function AccountSetup() {
@@ -844,8 +901,8 @@ function AccountSetup() {
   )
 }
 
-function TrackStages({ part }: { part: WorkshopPart }) {
-  const track = workflowTracks.find((entry) => entry.part === part)
+function LabStages({ lab }: { lab: WorkshopLab }) {
+  const track = labStages.find((entry) => entry.lab === lab)
   if (!track) return null
   return (
     <div>
@@ -878,43 +935,105 @@ function ScreenshotFigure({
   caption: string
 }) {
   const size = screenshotSize(src)
+  const lightbox = useContext(LightboxContext)
 
   return (
-    <Dialog>
-      <figure className="overflow-hidden rounded-xl border bg-muted/20">
-        <DialogTrigger asChild>
-          <button
-            aria-label={`View larger: ${alt}`}
-            className="block w-full cursor-zoom-in bg-slate-950/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            type="button"
-          >
-            <img
-              alt={alt}
-              className="mx-auto max-h-[38rem] w-full object-contain"
-              height={size?.[1]}
-              loading="lazy"
-              src={src}
-              style={size ? { maxWidth: `${size[0]}px` } : undefined}
-              width={size?.[0]}
-            />
-          </button>
-        </DialogTrigger>
-        <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-xs leading-5 text-muted-foreground">
-          <span>{caption}</span>
-          <DialogTrigger asChild>
-            <button className="font-medium text-primary hover:underline" type="button">
-              View larger
-            </button>
-          </DialogTrigger>
-        </figcaption>
-      </figure>
-      <DialogContent
-        className="max-h-[94vh] w-[96vw] max-w-[1500px] gap-3 overflow-auto p-3 sm:max-w-[1500px] sm:p-4"
+    <figure className="overflow-hidden rounded-xl border bg-muted/20">
+      <button
+        aria-label={`View larger: ${alt}`}
+        className="block w-full cursor-zoom-in bg-slate-950/95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        data-lightbox-alt={alt}
+        data-lightbox-caption={caption}
+        data-lightbox-src={src}
+        onClick={(event) => lightbox.open(event.currentTarget)}
+        type="button"
       >
+        <img
+          alt={alt}
+          className="mx-auto max-h-[44rem] w-full object-contain"
+          height={size?.[1]}
+          loading="lazy"
+          src={src}
+          style={size ? { maxWidth: `${size[0]}px` } : undefined}
+          width={size?.[0]}
+        />
+      </button>
+      <figcaption className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-xs leading-5 text-muted-foreground">
+        <span>{caption}</span>
+        <button
+          className="font-medium text-primary hover:underline"
+          data-lightbox-open
+          onClick={(event) => {
+            const trigger = event.currentTarget
+              .closest('figure')
+              ?.querySelector<HTMLElement>(LIGHTBOX_ITEM_SELECTOR)
+            if (trigger) lightbox.open(trigger)
+          }}
+          type="button"
+        >
+          View larger
+        </button>
+      </figcaption>
+    </figure>
+  )
+}
+
+// One viewer for the whole page. Left and right step through every figure
+// currently on screen, in the order they appear.
+function Lightbox({
+  items,
+  index,
+  onStep,
+  onClose,
+}: {
+  items: { src: string; alt: string; caption: string }[]
+  index: number
+  onStep: (delta: number) => void
+  onClose: () => void
+}) {
+  const current = items[index]
+
+  useEffect(() => {
+    if (!current) return
+    function onKey(event: KeyboardEvent) {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault()
+        // Steps by delta rather than to a computed index: key repeat fires several
+        // events before React re-renders, and they would all read the same stale
+        // index and collapse into a single move.
+        onStep(event.key === 'ArrowRight' ? 1 : -1)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [current, onStep])
+
+  if (!current) return null
+
+  return (
+    <Dialog onOpenChange={(open) => !open && onClose()} open>
+      <DialogContent className="max-h-[94vh] w-[97vw] max-w-[1800px] gap-3 overflow-hidden p-3 sm:max-w-[1800px] sm:p-4">
         <DialogHeader>
-          <DialogTitle className="pr-10 text-base font-semibold leading-6">{caption}</DialogTitle>
+          <DialogTitle className="pr-10 text-base font-semibold leading-6">{current.caption}</DialogTitle>
         </DialogHeader>
-        <img alt={alt} className="max-h-[80vh] w-full rounded-lg bg-slate-950/95 object-contain" src={src} />
+        <img
+          alt={current.alt}
+          className="max-h-[78vh] w-full rounded-lg bg-slate-950/95 object-contain"
+          src={current.src}
+        />
+        {items.length > 1 && (
+          <div className="flex items-center justify-between gap-3 px-1">
+            <Button onClick={() => onStep(-1)} size="sm" variant="outline">
+              <ChevronLeft className="h-4 w-4" /> Previous
+            </Button>
+            <span className="text-xs font-medium tabular-nums text-muted-foreground">
+              {index + 1} of {items.length} · use the left and right arrow keys
+            </span>
+            <Button onClick={() => onStep(1)} size="sm" variant="outline">
+              Next <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )
@@ -947,7 +1066,9 @@ function WorkshopCard({
               </div>
               <div className="min-w-0">
                 <div className="mb-1.5 flex flex-wrap items-center gap-2">
-                  {section.part && <Badge variant="outline">{section.part}</Badge>}
+                  <Badge variant="outline">
+                    Lab {labNumber(section.lab)} · {section.group}
+                  </Badge>
                   {section.step && <Badge variant="secondary">Step {section.step}</Badge>}
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock3 className="h-3.5 w-3.5" /> {section.duration}
@@ -967,7 +1088,7 @@ function WorkshopCard({
                     </button>
                   </CollapsibleTrigger>
                 </h2>
-                <CardDescription className="mt-1.5 max-w-2xl leading-6">{section.description}</CardDescription>
+                <CardDescription className="mt-1.5 max-w-4xl leading-6">{section.description}</CardDescription>
               </div>
             </div>
             {section.step && onComplete && (
@@ -1028,21 +1149,34 @@ export default function App() {
     }
   })
   const [searchTerm, setSearchTerm] = useState('')
-  const [activeSection, setActiveSection] = useState('overview')
+  const [activeSection, setActiveSection] = useState('sf-overview')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  // null is the home page. Entering a lab swaps the page for that lab's steps.
+  const [activeLab, setActiveLab] = useState<WorkshopLab | null>(null)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [collapsedLabs, setCollapsedLabs] = useState<Set<string>>(new Set())
+  const [lightbox, setLightbox] = useState<{
+    items: { src: string; alt: string; caption: string }[]
+    index: number
+  } | null>(null)
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set())
   const [pendingScroll, setPendingScroll] = useState<{ id: string; smooth: boolean } | null>(null)
 
   const normalizedSearch = searchTerm.trim().toLowerCase()
-  const visibleSections = useMemo(
-    () =>
-      normalizedSearch
-        ? workshopSections.filter((section) =>
-            `${section.title} ${section.description} ${section.searchTerms}`.toLowerCase().includes(normalizedSearch),
-          )
-        : workshopSections,
-    [normalizedSearch],
-  )
+  // Search deliberately ignores which page you are on - a hit in the other lab is
+  // still the answer you were looking for. Otherwise the page decides: home shows
+  // each lab's overview, a lab shows that lab's numbered steps.
+  const visibleSections = useMemo(() => {
+    if (normalizedSearch) {
+      return workshopSections.filter((section) =>
+        `${section.title} ${section.description} ${section.searchTerms}`
+          .toLowerCase()
+          .includes(normalizedSearch),
+      )
+    }
+    if (activeLab) return workshopSections.filter((section) => section.lab === activeLab && section.step)
+    return workshopSections.filter((section) => section.step === undefined)
+  }, [normalizedSearch, activeLab])
 
   const collapseApi = useMemo<SectionCollapseApi>(
     () => ({
@@ -1066,6 +1200,57 @@ export default function App() {
   const visibleIds = useMemo(() => new Set(visibleSections.map((section) => section.id)), [visibleSections])
   const completeCount = completed.size
   const progress = Math.round((completeCount / progressSections.length) * 100)
+
+  // Home totals every lab; inside a lab the bar is about that lab alone.
+  const scopeSteps = activeLab ? stepsInLab(activeLab) : progressSections
+  const scopeDone = scopeSteps.filter((section) => completed.has(section.id)).length
+  const scopeProgress = Math.round((scopeDone / scopeSteps.length) * 100)
+  const scopeLabel = activeLab ? `Lab ${labNumber(activeLab)} progress` : 'Overall progress'
+
+  const openLightbox = useCallback((trigger: HTMLElement) => {
+    const items = readLightboxItems()
+    const index = [...document.querySelectorAll<HTMLElement>(LIGHTBOX_ITEM_SELECTOR)].indexOf(trigger)
+    if (!items.length || index < 0) return
+    setLightbox({ items, index })
+  }, [])
+
+  const lightboxApi = useMemo<LightboxApi>(() => ({ open: openLightbox }), [openLightbox])
+
+  // Wraps, so holding an arrow never dead-ends on the first or last figure.
+  const stepLightbox = useCallback((delta: number) => {
+    setLightbox((current) =>
+      current
+        ? { ...current, index: (current.index + delta + current.items.length) % current.items.length }
+        : current,
+    )
+  }, [])
+
+  function enterLab(lab: WorkshopLab) {
+    setSearchTerm('')
+    setActiveLab(lab)
+    window.scrollTo({ behavior: 'instant', top: 0 })
+  }
+
+  const labNavApi = useMemo<LabNavApi>(() => ({ enterLab }), [])
+
+  function goHome() {
+    setSearchTerm('')
+    setActiveLab(null)
+    window.scrollTo({ behavior: 'instant', top: 0 })
+  }
+
+  function toggleLabOutline(lab: string) {
+    setCollapsedLabs((current) => {
+      const next = new Set(current)
+      if (next.has(lab)) next.delete(lab)
+      else next.add(lab)
+      return next
+    })
+  }
+
+  function groupVisible(lab: WorkshopLab, group: string) {
+    return visibleSections.some((section) => section.lab === lab && section.group === group)
+  }
 
   useEffect(() => {
     localStorage.setItem(PROGRESS_KEY, JSON.stringify([...completed]))
@@ -1143,8 +1328,14 @@ export default function App() {
 
   function navigateTo(id: string) {
     setMobileNavOpen(false)
-    // The sidebar lists every step, but a search filters the page. Clear it, or the
-    // shortcut points at a card that is not currently rendered and nothing happens.
+    // A sidebar shortcut can point into the other lab, or past an active search.
+    // Move the page to wherever the target actually lives first, or the scroll
+    // targets a card that is not rendered and nothing happens.
+    const target = workshopSections.find((section) => section.id === id)
+    if (target) {
+      if (target.step === undefined) setActiveLab(null)
+      else if (target.lab !== activeLab) setActiveLab(target.lab)
+    }
     if (!visibleIds.has(id)) setSearchTerm('')
     setCollapsedSections((current) => {
       if (!current.has(id)) return current
@@ -1161,15 +1352,27 @@ export default function App() {
 
   const nav = (
     <nav aria-label="Workshop steps" className="space-y-6">
-      {workshopParts.map((part) => {
-        const partSteps = stepsInPart(part.title)
+      {workshopLabs.map((entry) => {
+        const partSteps = stepsInLab(entry.lab)
         const partDone = partSteps.filter((section) => completed.has(section.id)).length
+        const outlineOpen = !collapsedLabs.has(entry.lab)
         return (
-        <div className="space-y-4" key={part.title}>
+        <div className="space-y-4" key={entry.lab}>
           <div className="border-b pb-2">
-            <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
-              {part.title}
-            </p>
+            <button
+              aria-expanded={outlineOpen}
+              className="flex w-full items-center gap-2 text-left text-[11px] font-bold uppercase tracking-[0.14em] text-foreground hover:text-primary"
+              onClick={() => toggleLabOutline(entry.lab)}
+              type="button"
+            >
+              <ChevronDown
+                aria-hidden="true"
+                className={`h-3.5 w-3.5 shrink-0 transition-transform ${outlineOpen ? '' : '-rotate-90'}`}
+              />
+              <span className="min-w-0 flex-1">
+                Lab {entry.number} · {entry.lab}
+              </span>
+            </button>
             <div className="mt-1.5 flex items-center gap-2">
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                 <div
@@ -1182,8 +1385,8 @@ export default function App() {
               </span>
             </div>
           </div>
-          {part.groups.map((group) => {
-            const sections = sectionsInPartGroup(part.title, group)
+          {outlineOpen && entry.groups.map((group) => {
+            const sections = sectionsInLabGroup(entry.lab, group)
             return (
               <div key={group}>
                 <p className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -1228,6 +1431,8 @@ export default function App() {
   )
 
   return (
+    <LabNavContext.Provider value={labNavApi}>
+    <LightboxContext.Provider value={lightboxApi}>
     <SectionCollapseContext.Provider value={collapseApi}>
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
@@ -1312,14 +1517,17 @@ export default function App() {
         </SheetContent>
       </Sheet>
 
-      <div className="grid lg:grid-cols-[280px_minmax(0,1fr)]">
+      <div className={`grid ${sidebarOpen ? 'lg:grid-cols-[290px_minmax(0,1fr)]' : 'grid-cols-1'}`}>
+        {sidebarOpen && (
         <aside className="sticky top-[66px] hidden h-[calc(100vh-66px)] overflow-y-auto border-r p-5 lg:block">
-          <div className="mb-6 rounded-xl border bg-muted/30 p-4">
-            <p className="text-xs font-medium">Two independent tracks</p>
-            <p className="mt-1.5 text-xs leading-5 text-muted-foreground">
-              Do either one on its own, in any order. Progress for each is saved in this browser.
-            </p>
-          </div>
+          <Button
+            className="mb-4 w-full justify-start"
+            onClick={() => setSidebarOpen(false)}
+            size="sm"
+            variant="ghost"
+          >
+            <PanelLeftClose className="h-4 w-4" /> Hide outline
+          </Button>
           <Button className="mb-5 w-full" onClick={toggleAllSections} size="sm" variant="outline">
             {allExpanded ? (
               <>
@@ -1338,11 +1546,64 @@ export default function App() {
             </Button>
           )}
         </aside>
+        )}
 
         <main className="min-w-0">
+          {/* Tab strip: home plus one tab per lab, with the progress bar scoped to
+              whichever of them you are looking at. */}
+          <div className="sticky top-[66px] z-20 border-b bg-background/95 backdrop-blur">
+            <div className="flex w-full flex-col gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:gap-6 lg:px-10">
+              <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
+                {!sidebarOpen && (
+                  <Button
+                    aria-label="Show outline"
+                    className="mr-1 hidden shrink-0 lg:inline-flex"
+                    onClick={() => setSidebarOpen(true)}
+                    size="icon"
+                    variant="ghost"
+                  >
+                    <PanelLeftOpen className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button
+                  className="shrink-0"
+                  onClick={goHome}
+                  size="sm"
+                  variant={activeLab === null ? 'default' : 'ghost'}
+                >
+                  Home
+                </Button>
+                {workshopLabs.map((entry) => (
+                  <Button
+                    className="shrink-0"
+                    key={entry.lab}
+                    onClick={() => enterLab(entry.lab)}
+                    size="sm"
+                    variant={activeLab === entry.lab ? 'default' : 'ghost'}
+                  >
+                    {entry.number}. {entry.lab}
+                  </Button>
+                ))}
+              </div>
+              <div className="flex shrink-0 items-center gap-3 lg:w-72">
+                <span className="whitespace-nowrap text-xs font-medium text-muted-foreground">{scopeLabel}</span>
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary transition-[width] duration-500"
+                    style={{ width: `${scopeProgress}%` }}
+                  />
+                </div>
+                <span className="whitespace-nowrap text-xs font-semibold tabular-nums text-primary">
+                  {scopeDone}/{scopeSteps.length}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {activeLab === null && !normalizedSearch && (
           <div className="workshop-grid border-b">
-            <div className="mx-auto max-w-5xl px-4 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
-              <div className="max-w-3xl">
+            <div className="w-full px-4 py-12 sm:px-8 sm:py-16 lg:px-10 lg:py-20">
+              <div className="max-w-4xl">
                 <div className="mb-6">
                   <BrandLockup />
                 </div>
@@ -1350,44 +1611,43 @@ export default function App() {
                   UiPath Agentic Automation · Hands-on Workshop
                 </Badge>
                 <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                  Two hands-on tracks: automated forms, and agentic redaction
+                  Two hands-on labs: automated forms, and agentic redaction
                 </h1>
-                <p className="mt-5 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
-                  Each track is self-contained and starts from step 1. Take one or take both, in whichever
+                <p className="mt-5 max-w-3xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
+                  Each lab is self-contained and starts from step 1. Take one or take both, in whichever
                   order suits you. No UiPath experience needed for either.
                 </p>
               </div>
 
               <div className="mt-10 grid gap-4 sm:grid-cols-2">
-                {trackSummaries.map((track) => {
-                  const partSteps = stepsInPart(track.part)
+                {labSummaries.map((entry) => {
+                  const partSteps = stepsInLab(entry.lab)
                   const partDone = partSteps.filter((section) => completed.has(section.id)).length
                   return (
                     <div
                       className="flex flex-col rounded-xl border bg-background/90 p-5 shadow-sm backdrop-blur"
-                      key={track.part}
+                      key={entry.lab}
                     >
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
-                        {track.subtitle}
-                      </p>
-                      <p className="mt-1.5 text-lg font-semibold">{track.part}</p>
-                      <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{track.blurb}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
+                          {labNumber(entry.lab)}
+                        </span>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+                          {entry.subtitle}
+                        </p>
+                      </div>
+                      <p className="mt-2 text-lg font-semibold">{entry.lab}</p>
+                      <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">{entry.blurb}</p>
                       <p className="mt-4 text-xs font-medium text-muted-foreground">
-                        {partSteps.length} steps · about {durationForPart(track.part)} minutes
+                        {partSteps.length} steps · about {durationForLab(entry.lab)} minutes
                         {partDone > 0 && ` · ${partDone} done`}
                       </p>
                       <Button
                         className="mt-3 w-full"
-                        onClick={() =>
-                          navigateTo(
-                            partDone > 0
-                              ? partSteps.find((item) => !completed.has(item.id))?.id ?? track.firstSectionId
-                              : track.firstSectionId,
-                          )
-                        }
+                        onClick={() => enterLab(entry.lab)}
                         variant={partDone > 0 ? 'outline' : 'default'}
                       >
-                        {partDone > 0 ? 'Resume this track' : 'Start this track'}{' '}
+                        {partDone > 0 ? `Resume Lab ${labNumber(entry.lab)}` : `Start Lab ${labNumber(entry.lab)}`}{' '}
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </div>
@@ -1396,8 +1656,35 @@ export default function App() {
               </div>
             </div>
           </div>
+          )}
 
-          <div className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
+          {activeLab !== null && !normalizedSearch && (
+            <div className="border-b bg-muted/20">
+              <div className="w-full px-4 py-8 sm:px-8 lg:px-10">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
+                  Lab {labNumber(activeLab)} · {labSummaries.find((entry) => entry.lab === activeLab)?.subtitle}
+                </p>
+                <h1 className="mt-1.5 text-3xl font-bold tracking-tight sm:text-4xl">{activeLab}</h1>
+                <p className="mt-3 max-w-4xl text-pretty leading-7 text-muted-foreground">
+                  {labSummaries.find((entry) => entry.lab === activeLab)?.blurb}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <Button onClick={goHome} size="sm" variant="outline">
+                    <ChevronLeft className="h-4 w-4" /> Back to home
+                  </Button>
+                  <Button
+                    onClick={() => navigateTo(overviewSectionForLab(activeLab)?.id ?? 'sf-overview')}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    Re-read this lab's overview
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="w-full space-y-8 px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
             <div className="relative lg:hidden">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -1443,10 +1730,16 @@ export default function App() {
                   You will see how it was taught, check how accurate it is, then point an automation at it, run it
                   over four real forms, and approve every value it pulls.
                 </p>
-                <TrackStages part="Automated SF Processing" />
+                <LabStages lab="Automated SF Processing" />
                 <AccountSetup />
+                <EnterLabButton lab="Automated SF Processing" />
               </WorkshopCard>
             )}
+
+            <GroupDivider
+              label="Extract the data"
+              show={groupVisible('Automated SF Processing', 'Extract the data')}
+            />
 
             {visibleIds.has('du-model') && (
               <WorkshopCard
@@ -1610,8 +1903,14 @@ export default function App() {
                   </div>
                 </div>
                 <AccountSetup />
+                <EnterLabButton lab="Agentic FOIA Redaction" />
               </WorkshopCard>
             )}
+
+            <GroupDivider
+              label="Set up the solution"
+              show={groupVisible('Agentic FOIA Redaction', 'Set up the solution')}
+            />
 
             {visibleIds.has('project-setup') && (
               <WorkshopCard
@@ -1693,6 +1992,8 @@ export default function App() {
               </WorkshopCard>
             )}
 
+            <GroupDivider label="Run it by hand" show={groupVisible('Agentic FOIA Redaction', 'Run it by hand')} />
+
             {visibleIds.has('run-one') && (
               <WorkshopCard
                 completed={completed.has('run-one')}
@@ -1732,6 +2033,8 @@ export default function App() {
               </WorkshopCard>
             )}
 
+            <GroupDivider label="Teach the agent" show={groupVisible('Agentic FOIA Redaction', 'Teach the agent')} />
+
             {visibleIds.has('agent-context') && (
               <WorkshopCard
                 completed={completed.has('agent-context')}
@@ -1765,6 +2068,8 @@ export default function App() {
                 </Alert>
               </WorkshopCard>
             )}
+
+            <GroupDivider label="Run it again" show={groupVisible('Agentic FOIA Redaction', 'Run it again')} />
 
             {visibleIds.has('run-two') && (
               <WorkshopCard
@@ -1816,7 +2121,7 @@ export default function App() {
                 <CardContent>
                   <Search className="mx-auto h-8 w-8 text-muted-foreground" />
                   <h2 className="mt-4 text-lg font-semibold">No workshop steps found</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Try a term like “prompt,” “debug,” “autopilot,” or “assignee.”</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Try a term like “prompt,” “debug,” “autopilot,” or “assignee.” Search covers both labs.</p>
                   <Button className="mt-5" onClick={() => setSearchTerm('')} variant="outline">
                     Clear search
                   </Button>
@@ -1839,7 +2144,17 @@ export default function App() {
         </main>
       </div>
       <Toaster position="bottom-right" />
+      {lightbox && (
+        <Lightbox
+          index={lightbox.index}
+          items={lightbox.items}
+          onClose={() => setLightbox(null)}
+          onStep={stepLightbox}
+        />
+      )}
     </div>
     </SectionCollapseContext.Provider>
+    </LightboxContext.Provider>
+    </LabNavContext.Provider>
   )
 }
