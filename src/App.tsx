@@ -2487,12 +2487,15 @@ export default function App() {
                 </ol>
                 <Alert>
                   <Users className="h-4 w-4" />
-                  <AlertTitle>Compare notes</AlertTitle>
+                  <AlertTitle>Extrapolate to your day-to-day</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    Everyone wrote their own Finding Classification section, so no two prompts in the room are
-                    quite the same. If someone near you ran the same document, compare what each agent
-                    proposed - same six categories, different wording behind them, and you can see whose
-                    phrasing held up.
+                    The shape you just built is not specific to FOIA: find the documents, have an agent propose
+                    judgments along with its reasoning and its sources, keep a person in the approval seat, then
+                    act on the result. Go looking for that shape in your own week - anywhere you read something,
+                    decide against a policy or a rule, and record the decision. The half worth handing over is
+                    usually the clerical one, where you already know the answer and are only typing it in. And
+                    notice what moved today: before this lab, “read the document and choose the right statutory
+                    exemption, with a citation” probably sounded like something only a person could do.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
