@@ -4,6 +4,9 @@ export type WorkshopLab = 'Automated SF Processing' | 'Agentic FOIA Redaction'
 export type WorkshopSection = {
   id: string
   step?: number
+  // Optional sections render inside their lab but sit outside its step count
+  // and its time estimate, because nobody is required to do them.
+  optional?: boolean
   lab: WorkshopLab
   title: string
   shortTitle: string
@@ -16,6 +19,7 @@ export type WorkshopSection = {
     | 'Run it by hand'
     | 'Teach the agent'
     | 'Run it again'
+    | 'Optional'
   brandIcon: BrandIconComponent
   searchTerms: string
 }
@@ -175,6 +179,18 @@ export const workshopSections: WorkshopSection[] = [
     brandIcon: brandIcons.approved,
     searchTerms: 'hybrid detection banner clean category pills agent default statutory label policy evidence confidence approve final document email package redacted pdf inbox attachment',
   },
+  {
+    id: 'going-further',
+    lab: 'Agentic FOIA Redaction',
+    optional: true,
+    title: 'Going further',
+    shortTitle: 'Going further',
+    description: 'Optional things to try if you finish with time to spare.',
+    duration: '15 min',
+    group: 'Optional',
+    brandIcon: brandIcons.find,
+    searchTerms: 'extra credit optional exploration going further evaluations evaluation sets evaluators different document multiple documents manual findings add redaction manually remove edit loop back iteration escalate branches end events bpmn paths',
+  },
 ]
 
 export const progressSections = workshopSections.filter(
@@ -194,6 +210,42 @@ export function sectionById(id: string): WorkshopSection {
 // `scope` drives the colour: 'lab1' is covered here, 'lab2' comes back in the
 // other lab, and no scope means the workshop does not cover it at all. Drawing
 // all seven keeps the lab honest about how much of the product it leaves alone.
+// Deliberately prompts rather than steps. This is the section for someone who
+// finished early and wants to poke at it, and an open question suits that better
+// than more instructions.
+export const goingFurtherIdeas: { title: string; prompt: string }[] = [
+  {
+    title: 'Run it against a different document',
+    prompt:
+      'Pick a new search term and run the whole thing again. Does the category vocabulary you wrote hold up on a document that is not about geothermal leases, or does the agent start reaching for Other? If it does, what would you add to the prompt?',
+  },
+  {
+    title: 'Find a term that returns several documents',
+    prompt:
+      'Search for something broader and watch what changes in the review app - the document counter, and the Previous and Next controls that were greyed out before. How would this review feel with twelve documents instead of one?',
+  },
+  {
+    title: 'Edit the findings by hand',
+    prompt:
+      'Every finding has a Remove control, and the panel has Add redaction manually. Take out a finding you disagree with, add a term the agent missed, then look at what the redacted PDF does with your edits.',
+  },
+  {
+    title: 'Add a term at final review',
+    prompt:
+      'Final review has its own word list. Add a term there and approve, and the workflow loops back and redacts again rather than finishing. Follow the iteration count through the execution trail as it goes round.',
+  },
+  {
+    title: 'Trace the paths you did not take',
+    prompt:
+      'Process.bpmn has several end events you never reached: request denied, no matching documents found, escalated for review, redaction iteration limit reached. Follow each one backwards through the gateways and work out what would have to be true to land there.',
+  },
+  {
+    title: 'See how the agent is scored',
+    prompt:
+      'The PII Agent ships with evaluation sets and evaluators. Open them and read what a good answer is defined as. Evaluations are how you tell whether a prompt change actually improved the agent rather than just changed it - the difference between an opinion and a measurement.',
+  },
+]
+
 export const duPipeline: {
   stage: string
   lines: [string, string]
@@ -326,6 +378,7 @@ export const groups = [
   'Run it by hand',
   'Teach the agent',
   'Run it again',
+  'Optional',
 ] as const
 
 // Two independent labs sharing one page. Each numbers its own steps from 1 and
@@ -341,7 +394,14 @@ export const workshopLabs: {
   {
     lab: 'Agentic FOIA Redaction',
     number: 2,
-    groups: ['Overview', 'Set up the solution', 'Run it by hand', 'Teach the agent', 'Run it again'],
+    groups: [
+      'Overview',
+      'Set up the solution',
+      'Run it by hand',
+      'Teach the agent',
+      'Run it again',
+      'Optional',
+    ],
   },
 ]
 
@@ -363,12 +423,12 @@ export function stepsInLab(lab: WorkshopLab) {
 // The overview section is the lab's front door: it renders on the home page and
 // entering the lab from it opens the guided steps.
 export function overviewSectionForLab(lab: WorkshopLab) {
-  return workshopSections.find((section) => section.lab === lab && section.step === undefined)
+  return workshopSections.find((section) => section.lab === lab && section.group === 'Overview')
 }
 
 export function durationForLab(lab: WorkshopLab) {
   const total = workshopSections
-    .filter((section) => section.lab === lab)
+    .filter((section) => section.lab === lab && !section.optional)
     .reduce((sum, section) => sum + (Number.parseInt(section.duration, 10) || 0), 0)
   return Math.round(total / 5) * 5
 }

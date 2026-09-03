@@ -115,6 +115,7 @@ import {
   durationForLab,
   findingClassificationSection,
   foiaPipeline,
+  goingFurtherIdeas,
   identityRows,
   labNumber,
   labStages,
@@ -551,10 +552,6 @@ const steps = {
         alt: 'The Debug button and its dropdown arrow in the Studio toolbar',
         caption: 'Use the dropdown arrow, not the Debug button itself, so you get the configuration dialog first.',
       },
-      note: {
-        title: 'Why this step exists at all',
-        body: 'The solution ships with debug settings scoped to the account that built it, so they resolve for nobody else. Until you map these rows yourself, Debug either refuses to start or fails part way with a reference error.',
-      },
     },
     {
       text: 'Every row under Resources in solution reads Will be deployed in Debug folder. Select each field in turn and pick the matching resource under Shared. The dropdowns list only real, available resources, so there is exactly one sensible choice per row.',
@@ -570,6 +567,10 @@ const steps = {
         src: foiaResourcesDoneImage,
         alt: 'All seven solution resource rows mapped to their Shared counterparts',
         caption: 'Every row now shows a resource chip. Leave Deploy resources before debugging switched on.',
+      },
+      note: {
+        title: 'Why this step exists at all',
+        body: 'Most of what this solution needs already exists in Orchestrator and is shared with everyone in the workshop: the review app, the three RPA workflows, the storage bucket of DOJ guidance, and the Gmail connection that sends the final package. When you hit Debug, the solution deploys its resources into your own personal workspace. Left alone, that means fresh empty copies - a storage bucket with no guidance documents in it, a Gmail connection nobody has signed into - and the run fails partway through. Mapping each row to Shared/ points your run at the real, already-configured resources instead. The two things you actually edit today, Process.bpmn and the PII Agent, still run from your workspace. That is the point of running in Studio Web’s Debug: we can make changes, test, and see the results live. Once tested and hardened, solutions are deployed to production where changes are managed and infrastructure can be dynamically shared.',
       },
     },
     {
@@ -1383,9 +1384,9 @@ function WorkshopCard({
                       duration is the doing time and nothing else. */}
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock3 className="h-3.5 w-3.5" /> {section.duration}
-                    {section.step === undefined && ' read'}
+                    {section.group === 'Overview' && ' read'}
                   </span>
-                  {section.step === undefined && (
+                  {section.group === 'Overview' && (
                     <Badge variant="secondary">Lab takes about {durationForLab(section.lab)} min</Badge>
                   )}
                 </div>
@@ -1477,7 +1478,12 @@ export default function App() {
   // The home page leads with the lab cards, so each lab's overview starts folded
   // away rather than filling the first two screens with prose.
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
-    () => new Set(workshopSections.filter((section) => section.step === undefined).map((section) => section.id)),
+    () =>
+      new Set(
+        workshopSections
+          .filter((section) => section.group === 'Overview' || section.optional)
+          .map((section) => section.id),
+      ),
   )
   const [pendingScroll, setPendingScroll] = useState<{ id: string; smooth: boolean } | null>(null)
 
@@ -1493,8 +1499,9 @@ export default function App() {
           .includes(normalizedSearch),
       )
     }
-    if (activeLab) return workshopSections.filter((section) => section.lab === activeLab && section.step)
-    return workshopSections.filter((section) => section.step === undefined)
+    if (activeLab)
+      return workshopSections.filter((section) => section.lab === activeLab && section.group !== 'Overview')
+    return workshopSections.filter((section) => section.group === 'Overview')
   }, [normalizedSearch, activeLab])
 
   const collapseApi = useMemo<SectionCollapseApi>(
@@ -1518,14 +1525,13 @@ export default function App() {
     setCollapsedLabs(allOutlinesOpen ? new Set(workshopLabs.map((entry) => entry.lab)) : new Set())
   }
 
-  const visibleAllExpanded =
-    visibleSections.length > 0 && visibleSections.every((section) => !collapsedSections.has(section.id))
+  const someVisibleExpanded = visibleSections.some((section) => !collapsedSections.has(section.id))
 
   function toggleVisibleSections() {
     setCollapsedSections((current) => {
       const next = new Set(current)
       for (const section of visibleSections) {
-        if (visibleAllExpanded) next.add(section.id)
+        if (someVisibleExpanded) next.add(section.id)
         else next.delete(section.id)
       }
       return next
@@ -1668,7 +1674,7 @@ export default function App() {
     // targets a card that is not rendered and nothing happens.
     const target = workshopSections.find((section) => section.id === id)
     if (target) {
-      if (target.step === undefined) setActiveLab(null)
+      if (target.group === 'Overview') setActiveLab(null)
       else if (target.lab !== activeLab) setActiveLab(target.lab)
     }
     if (!visibleIds.has(id)) setSearchTerm('')
@@ -2025,13 +2031,13 @@ export default function App() {
             {visibleSections.length > 0 && (
               <div className="flex items-center justify-end">
                 <Button
-                  aria-label={visibleAllExpanded ? 'Collapse all steps' : 'Expand all steps'}
+                  aria-label={someVisibleExpanded ? 'Collapse all steps' : 'Expand all steps'}
                   onClick={toggleVisibleSections}
                   size="icon"
-                  title={visibleAllExpanded ? 'Collapse all steps' : 'Expand all steps'}
+                  title={someVisibleExpanded ? 'Collapse all steps' : 'Expand all steps'}
                   variant="outline"
                 >
-                  {visibleAllExpanded ? (
+                  {someVisibleExpanded ? (
                     <ChevronsDownUp className="h-4 w-4" />
                   ) : (
                     <ChevronsUpDown className="h-4 w-4" />
@@ -2455,6 +2461,39 @@ export default function App() {
                     </AlertDescription>
                   </Alert>
                 )}
+              </WorkshopCard>
+            )}
+
+            <GroupDivider label="Optional" show={groupVisible('Agentic FOIA Redaction', 'Optional')} />
+
+            {visibleIds.has('going-further') && (
+              <WorkshopCard section={sectionById('going-further')}>
+                <p className="leading-7">
+                  Nothing below is required and none of it is graded. These are the threads worth pulling if
+                  you have time left over, roughly in order of how quickly they pay off.
+                </p>
+                <ol className="space-y-4">
+                  {goingFurtherIdeas.map((idea, index) => (
+                    <li className="flex min-w-0 gap-3" key={idea.title}>
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold">{idea.title}</p>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{idea.prompt}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+                <Alert>
+                  <Users className="h-4 w-4" />
+                  <AlertTitle>Compare notes</AlertTitle>
+                  <AlertDescription className="mt-1 leading-6">
+                    If you try the same document as someone near you, compare what the agent proposed. Two runs
+                    of the same prompt on the same document will not always agree, and where they disagree is
+                    usually where the prompt is doing the least work.
+                  </AlertDescription>
+                </Alert>
               </WorkshopCard>
             )}
 

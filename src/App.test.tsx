@@ -122,14 +122,17 @@ describe('Agentic Redaction Workshop', () => {
     const user = userEvent.setup()
     renderApp()
 
-    for (const section of workshopSections.filter((entry) => entry.step === undefined)) {
+    // Home carries each lab's overview; everything else lives in its lab.
+    for (const section of workshopSections.filter((entry) => entry.group === 'Overview')) {
       expect(screen.getByRole('heading', { name: section.title })).toBeInTheDocument()
     }
 
     for (const tab of LAB_TABS) {
       await openLab(user, tab)
       const lab = tab === LAB_TABS[0] ? 'Automated SF Processing' : 'Agentic FOIA Redaction'
-      for (const section of stepsInLab(lab)) {
+      const inLab = workshopSections.filter((entry) => entry.lab === lab && entry.group !== 'Overview')
+      expect(inLab.length).toBeGreaterThan(0)
+      for (const section of inLab) {
         expect(screen.getByRole('heading', { name: section.title })).toBeInTheDocument()
       }
     }
@@ -216,6 +219,20 @@ describe('Agentic Redaction Workshop', () => {
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: '1. Project setup' })).not.toBeInTheDocument()
     })
+  })
+
+  it('keeps the optional section inside lab 2, outside its step count', async () => {
+    const user = userEvent.setup()
+    renderApp()
+
+    // Optional, so it is not on the home page and not in the progress total.
+    expect(screen.queryByRole('heading', { name: 'Going further' })).not.toBeInTheDocument()
+    expect(stepsInLab('Agentic FOIA Redaction').some((s) => s.id === 'going-further')).toBe(false)
+
+    await openLab(user, '2. Agentic FOIA Redaction')
+    expect(screen.getByRole('heading', { name: 'Going further' })).toBeInTheDocument()
+    // Folded by default, and it carries no completion checkbox.
+    expect(screen.queryByLabelText('Mark Going further complete')).not.toBeInTheDocument()
   })
 
   it('drops saved progress for sections that no longer exist', async () => {
