@@ -387,7 +387,7 @@ export const labSummaries: {
   },
   {
     lab: 'Agentic FOIA Redaction',
-    subtitle: 'Maestro, agents, and Action Center',
+    subtitle: 'Maestro, agents, DU, and Action Center',
     blurb:
       'A working FOIA redaction workflow, run twice on the same document. First with an agent that cannot justify a single finding, then again once you have given it a policy source and a vocabulary.',
   },

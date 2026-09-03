@@ -465,8 +465,11 @@ const steps = {
       },
     },
     {
-      text: 'In Default value, replace the placeholder your.email@here.com with a real address you can open right now. Keep the existing lewis.bell@uipath.com entry as a second element.',
+      text: 'You are passing a list of email addresses. The send-email activity at the end of the workflow can deliver to one recipient or to many, so it takes a list rather than a single value. In programmatic terms this is an array of strings: each address sits inside its own pair of double quotes, and the addresses are separated by commas. Add as many as you like.',
       copy: { label: 'recipientEmails format', value: recipientEmailsExample },
+    },
+    {
+      text: 'Replace the placeholder your.email@here.com with a real address you can open right now, and keep the existing lewis.bell@uipath.com entry as a second element.',
       note: {
         title: 'Replace, never delete',
         body: 'If you empty this array the workflow sends no email and raises no error, so the run looks like a success and nothing arrives. Also note that a bare name as its own element will fail - every element must be an address.',
@@ -528,6 +531,13 @@ const steps = {
         caption: 'Both review nodes need this. Missing the second one strands the run halfway through.',
       },
       note: {
+        title: 'A single user is not the only option',
+        body: 'Assignment Criteria has more in it than User. UiPath can route a task to a group for a shared team queue, or to a named list, so the first free reviewer picks it up rather than one person becoming a bottleneck. Open the dropdown and have a look - and think about what each option would need you to pass into Assignee, because a group is not an email address. We use a single user today only because you are the whole review team.',
+      },
+    },
+    {
+      text: 'Confirm both review nodes show a reviewAssignee chip before moving on.',
+      note: {
         title: 'Check both nodes before moving on',
         body: 'There is no error message for a missing assignee and no retry budget later in the workshop. Select each review node once more and confirm you see a reviewAssignee chip on both, and two entries under recipientEmails.',
       },
@@ -535,7 +545,7 @@ const steps = {
   ],
   foiaResources: [
     {
-      text: 'Select the arrow beside the Debug button in the toolbar and choose the option that opens the debug configuration. The Debug configuration dialog opens on the Solution resources tab.',
+      text: 'Select the arrow beside the Debug button in the toolbar and choose the option that opens the debug configuration. The Debug configuration dialog opens on the Solution resources tab. F5 also starts a debug run, which is quicker once you have been round this loop a few times.',
       figure: {
         src: foiaDebugButtonImage,
         alt: 'The Debug button and its dropdown arrow in the Studio toolbar',
@@ -570,8 +580,9 @@ const steps = {
         caption: 'geothermal matches one real document with three findings, which is the right size for one sitting.',
       },
       note: {
-        title: 'Use geothermal for both runs',
-        body: 'The whole point of the workshop is comparing two runs over the same document. A different search term returns a different document and the comparison stops working. Keep the term identical in run 1 and run 2.',
+        title: 'Use the same term for your first two runs',
+        body: 'The workshop compares two runs over the same document, so the term has to match in run 1 and run 2 or the comparison stops working. geothermal is a good one to start with - one document, three findings. After that, try any search term you like. Check the FOIA Reading Room first to see which sample documents are available.',
+        link: { href: readingRoomUrl, label: 'Open the FOIA Reading Room' },
       },
     },
   ],
@@ -583,6 +594,9 @@ const steps = {
         alt: 'The process running in debug with a green execution trail and the review task highlighted',
         caption: 'Green ticks mark completed steps. The run pauses at FOIA Sensitive Data Review and waits for you.',
       },
+    },
+    {
+      text: 'Give yourself room to watch it. The page-scroll icon on the right of the trail closes the logs, and on the left the project explorer (folder icon) and Data manager (suitcase icon) each collapse when you select them again. You can also drag the top edge of the Execution trail upwards to make it taller.',
     },
     'When the trail reaches FOIA Sensitive Data Review it stops. In the Details panel on the right, select Open app task. Your review opens in a new tab.',
     {
@@ -615,6 +629,10 @@ const steps = {
         src: foiaConfirmImage,
         alt: 'The review task with all findings labelled and Confirm redaction enabled',
         caption: 'Each finding now shows a statutory label and an optional reviewer rationale field.',
+      },
+      note: {
+        title: 'Reviewer rationale is optional here, but not in real life',
+        body: 'Leave it blank today - it is optional so the exercise stays short. On a real FOIA response the rationale is required, and it has to be written per finding. Imagine doing that by hand for every redaction on every document. It is another job the agent takes on later in this lab.',
       },
     },
     {
@@ -652,7 +670,7 @@ const steps = {
       },
       note: {
         title: 'The unresolved reference is the gap',
-        body: 'The user prompt tells the agent to resolve guidance from a DOJ context, and the reference chip for it is highlighted because nothing is connected. That is why run 1 reported Guidance unavailable. Leave the prompts alone in this step.',
+        body: 'The user prompt tells the agent to resolve guidance from a DOJ context, and the reference chip for it is highlighted because nothing is connected. That is why run 1 reported Guidance unavailable.',
       },
     },
     {
@@ -721,7 +739,11 @@ const steps = {
         alt: 'The system prompt with the new Finding Classification section highlighted',
         caption: 'Six categories, each defined in FOIA terms, followed by rules keeping reasoning out of the label.',
       },
-      copy: { label: 'Finished section, if you need to paste it by hand', value: findingClassificationSection },
+      note: {
+        title: 'Your version should look close to this',
+        body: 'Autopilot generally does a good job of this section, and what it wrote for you should read much like the block below - the same six categories and the same rule about keeping reasoning out of the label. It does not need to match word for word. Use Autopilot if you can: writing the prompt is the skill worth practising. The block below is here as a fallback if Autopilot struggled, or if you would rather paste a known-good version and move on.',
+      },
+      copy: { label: 'Known-good version of the section', value: findingClassificationSection },
     },
     {
       text: 'Notice the last rule in the section: reasoning, justification and nuance belong in rationale, not category. Without that sentence the model puts a full explanation back into the label and you are no better off than run 1.',
@@ -774,7 +796,7 @@ type StepItem =
   | {
       text: string
       figure?: { src: string; alt: string; caption: string }
-      note?: { title: string; body: string }
+      note?: { title: string; body: string; link?: { href: string; label: string } }
       copy?: { label: string; value: string }
     }
 
@@ -796,7 +818,21 @@ function Checklist({ items }: { items: StepItem[] }) {
                 <Alert>
                   <Circle className="h-4 w-4 fill-primary text-primary" />
                   <AlertTitle>{entry.note.title}</AlertTitle>
-                  <AlertDescription className="mt-1 leading-6">{entry.note.body}</AlertDescription>
+                  <AlertDescription className="mt-1 leading-6">
+                    {entry.note.body}
+                    {entry.note.link ? (
+                      <span className="mt-2 block">
+                        <a
+                          className="font-medium text-primary hover:underline"
+                          href={entry.note.link.href}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          {entry.note.link.label} <ExternalLink className="inline h-3.5 w-3.5" />
+                        </a>
+                      </span>
+                    ) : null}
+                  </AlertDescription>
                 </Alert>
               ) : null}
             </div>
@@ -1913,8 +1949,10 @@ export default function App() {
                   Two hands-on labs: automated forms, and agentic redaction
                 </h1>
                 <p className="mt-5 max-w-3xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
-                  Each lab is self-contained and starts from step 1. Take one or take both, in whichever
-                  order suits you. No UiPath experience needed for either.
+                  Lab 1 is an introduction to automated document processing: see how a doc model is built,
+                  then run one against sample forms and check the results yourself. Lab 2 is its own build, a
+                  FOIA redaction workflow using Agents, DU and Action Center, all orchestrated through Maestro.
+                  No UiPath or development experience needed.
                 </p>
               </div>
 
@@ -2283,9 +2321,9 @@ export default function App() {
                 </div>
                 <Alert>
                   <CheckCircle2 className="h-4 w-4" />
-                  <AlertTitle>Verify every row, not just the ones you remember</AlertTitle>
+                  <AlertTitle>Verify every row is using the “Shared/” resource</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    A row left on <em>Will be deployed in Debug folder</em> is the single most common reason a first run fails. Scroll the list to the bottom and confirm all seven show a resource chip before you leave this dialog.
+                    A row left on <em>Will be deployed in Debug folder</em> is the single most common reason a first run fails. Highlight each defined resource: if it starts with <code>Shared/</code>, it is good to go.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
@@ -2305,7 +2343,12 @@ export default function App() {
                       <Badge className="mb-3" variant="secondary">Baseline run</Badge>
                       <h3 className="text-xl font-semibold">This run is supposed to be tedious.</h3>
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                        The agent has no policy source and no category vocabulary yet, so it can find sensitive passages but cannot justify withholding any of them. Every statutory decision falls to you. Notice how that feels, and how long it takes.
+                        What you are about to run is already roughly half an automated FOIA process. A
+                        prompt-based agent proposes the findings, which is not nothing and is further than most
+                        FOIA redaction gets today. But it is still manual work: you review every proposed
+                        finding and hand-map an exemption code to each one, with no rationale to go on. The
+                        rest of the lab takes it further - a grounded agent, mapped to the DOJ FOIA policy
+                        documents, proposes the codes and the reasoning too.
                       </p>
                     </div>
                     <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border bg-background text-primary shadow-sm">

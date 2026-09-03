@@ -43,7 +43,11 @@ export function CopyBlock({ label, value, language = 'text', maxHeight = 'max-h-
           {copied ? 'Copied' : 'Copy'}
         </Button>
       </div>
-      <pre className={`${maxHeight} overflow-auto p-4 text-xs leading-6 sm:text-sm`}>
+      {/* Wrap rather than scroll sideways: these are prompts to read, and a long
+          single-line prompt was hiding most of itself off the right edge. */}
+      <pre
+        className={`${maxHeight} overflow-auto whitespace-pre-wrap break-words p-4 text-xs leading-6 sm:text-sm`}
+      >
         <code>{value}</code>
       </pre>
     </div>
