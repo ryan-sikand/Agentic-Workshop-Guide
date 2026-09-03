@@ -242,7 +242,7 @@ export const goingFurtherIdeas: { title: string; prompt: string }[] = [
   {
     title: 'See how the agent is scored',
     prompt:
-      'The PII Agent ships with evaluation sets and evaluators. Open them and read what a good answer is defined as. Evaluations are how you tell whether a prompt change actually improved the agent rather than just changed it - the difference between an opinion and a measurement.',
+      'The PII Agent ships with evaluation sets and evaluators. Open them and read what a good answer is defined as, then select Retest to run all five cases. Evaluations are how you tell whether a prompt change actually improved the agent rather than just changed it - the difference between an opinion and a measurement.',
   },
 ]
 

@@ -2489,9 +2489,10 @@ export default function App() {
                   <Users className="h-4 w-4" />
                   <AlertTitle>Compare notes</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    If you try the same document as someone near you, compare what the agent proposed. Two runs
-                    of the same prompt on the same document will not always agree, and where they disagree is
-                    usually where the prompt is doing the least work.
+                    Everyone wrote their own Finding Classification section, so no two prompts in the room are
+                    quite the same. If someone near you ran the same document, compare what each agent
+                    proposed - same six categories, different wording behind them, and you can see whose
+                    phrasing held up.
                   </AlertDescription>
                 </Alert>
               </WorkshopCard>
