@@ -2489,9 +2489,9 @@ export default function App() {
                   <Users className="h-4 w-4" />
                   <AlertTitle>Extrapolate to your day-to-day</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    The shape you just built is not specific to FOIA: find the documents, have an agent propose
+                    The pattern you just built is not specific to FOIA: find the documents, have an agent propose
                     judgments along with its reasoning and its sources, keep a person in the approval seat, then
-                    act on the result. Go looking for that shape in your own week - anywhere you read something,
+                    act on the result. Go looking for that pattern in your own week - anywhere you read something,
                     decide against a policy or a rule, and record the decision. The half worth handing over is
                     usually the clerical one, where you already know the answer and are only typing it in. And
                     notice what moved today: before this lab, “read the document and choose the right statutory
