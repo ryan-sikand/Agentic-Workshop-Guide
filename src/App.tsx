@@ -1835,7 +1835,7 @@ export default function App() {
       </header>
 
       <Sheet onOpenChange={setMobileNavOpen} open={mobileNavOpen}>
-        <SheetContent className="w-[88vw] max-w-sm overflow-y-auto p-0" side="left">
+        <SheetContent className="w-[88vw] max-w-sm overflow-y-auto overscroll-y-contain p-0" side="left">
           <SheetHeader className="border-b p-5 text-left">
             <SheetTitle>Workshop navigation</SheetTitle>
           </SheetHeader>
@@ -1859,8 +1859,10 @@ export default function App() {
       </Sheet>
 
       <div className={`grid ${sidebarOpen ? 'lg:grid-cols-[290px_minmax(0,1fr)]' : 'grid-cols-1'}`}>
+        {/* overscroll-y-contain keeps the wheel inside the outline: reaching either
+            end stops there instead of handing the scroll on to the page behind it. */}
         {sidebarOpen && (
-        <aside className="sticky top-[66px] hidden h-[calc(100vh-66px)] overflow-y-auto border-r p-5 lg:block">
+        <aside className="sticky top-[66px] hidden h-[calc(100vh-66px)] overflow-y-auto overscroll-y-contain border-r p-5 lg:block">
           <Button
             className="mb-4 w-full justify-start"
             onClick={() => setSidebarOpen(false)}
