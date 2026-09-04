@@ -230,10 +230,10 @@ function BrandLockup({ compact = false }: { compact?: boolean }) {
 
 const steps = {
   duTour: [
-    'On your workshop page, select Open UiPath Environment. A new tab opens UiPath Automation Cloud, already signed in as your workshop user. If a sign-in page appears instead, choose Continue with Microsoft and use the credentials on your workshop page.',
-    'You land in Orchestrator. Select the grid of nine dots in the very top left corner. That is the app switcher, usually called the waffle menu.',
+    'On your workshop page, select **Open UiPath Environment**. A new tab opens UiPath Automation Cloud, already signed in as your workshop user. If a sign-in page appears instead, choose **Continue with Microsoft** and use the credentials on your workshop page.',
+    'You land in Orchestrator. Select the **grid of nine dots** in the very top left corner. That is the app switcher, usually called the waffle menu.',
     {
-      text: 'In the menu, select More to expand the full product list, then select Document Understanding.',
+      text: 'In the menu, select **More** to expand the full product list, then select **Document Understanding**.',
       figure: {
         src: duWaffleDuImage,
         alt: 'Orchestrator with the waffle menu open and More expanded',
@@ -241,16 +241,16 @@ const steps = {
       },
     },
     {
-      text: 'The Projects list opens. Select FMS Training. The project already exists and is shared with everyone in the workshop, so there is nothing to create.',
+      text: 'The Projects list opens. Select **FMS Training**. The project already exists and is shared with everyone in the workshop, so there is nothing to create.',
       figure: {
         src: duProjectListImage,
         alt: 'Document Understanding projects list showing the FMS Training project',
         caption: 'One project, FMS Training, tagged Modern, holding the SF1449 document type.',
       },
     },
-    'The project opens on the Build screen. The row named SF1449 is the document type, meaning the shape of form this model was taught to read. It shows 83 documents and a green Excellent rating. Select the arrow at the left of the row to expand it and list the sample files. Dismiss any What is new popup that appears.',
+    'The project opens on the Build screen. The row named SF1449 is the document type, meaning the shape of form this model was taught to read. It shows 83 documents and a green Excellent rating. Select the **arrow at the left of the row** to expand it and list the sample files. Dismiss any What is new popup that appears.',
     {
-      text: 'Select the three-dot menu on any document row and choose Annotate. This opens the labelling view, where highlighted text is what the model was taught to pull and the right panel lists the fields it fills.',
+      text: 'Select the **three-dot menu** on any document row and choose **Annotate**. This opens the labelling view, where highlighted text is what the model was taught to pull and the right panel lists the fields it fills.',
       figure: {
         src: duBuildImage,
         alt: 'Annotation view with an SF1449 form, the document strip, and extraction fields',
@@ -258,7 +258,7 @@ const steps = {
       },
     },
     {
-      text: 'Use the arrows beside the document counter at the bottom right to step through a few samples. Find one whose page counter at the top reads 1 / 2 and move to page 2.',
+      text: 'Use the **arrows beside the document counter** at the bottom right to step through a few samples. Find one whose page counter at the top reads **1 / 2** and move to **page 2**.',
       figure: {
         src: duContinuationImage,
         alt: 'Page two of a sample document with fields extracted from the continuation sheet',
@@ -270,7 +270,7 @@ const steps = {
       },
     },
     {
-      text: 'Go back to Build using the breadcrumb at the top. On the SF1449 row, select the three-dot menu at the far right and choose Document type manager.',
+      text: 'Go back to Build using the breadcrumb at the top. On the SF1449 row, select the **three-dot menu** at the far right and choose **Document type manager**.',
       figure: {
         src: duTypeMenuImage,
         alt: 'Build screen with the SF1449 three-dot menu open showing Document type manager',
@@ -286,7 +286,7 @@ const steps = {
       },
     },
     {
-      text: 'In the left menu select Measure, then open the Metrics tab. Read the project score at the left and the per-field accuracy on the right. Anything above 90 percent is healthy.',
+      text: 'In the left menu select **Measure**, then open the **Metrics** tab. Read the project score at the left and the per-field accuracy on the right. Anything above 90 percent is healthy.',
       figure: {
         src: duMeasureImage,
         alt: 'Measure tab showing the project score and per-field accuracy',
@@ -296,28 +296,28 @@ const steps = {
   ],
   duStudio: [
     {
-      text: 'In the left menu select Publish. The Project versions list shows two deployed versions of this model.',
+      text: 'In the left menu select **Publish**. The Project versions list shows two deployed versions of this model.',
       figure: {
         src: duVersionsImage,
         alt: 'Publish tab listing two deployed project versions with an Open Studio Web button',
         caption: 'Both versions are deployed. The strip at the bottom is where you leave for Studio Web.',
       },
     },
-    'Do not select Create project version. Publishing a new version of the model is not part of this workshop.',
-    'At the bottom of the page, in the Automate your process strip, check that the version named is Navy_FMS_DU_Workshop_v2, then select Open Studio Web. A new tab opens with a prebuilt automation called FMS Training document processing automation.',
+    'Do not select **Create project version**. Publishing a new version of the model is not part of this workshop.',
+    'At the bottom of the page, in the Automate your process strip, check that the version named is **Navy_FMS_DU_Workshop_v2**, then select **Open Studio Web**. A new tab opens with a prebuilt automation called FMS Training document processing automation.',
     'Wait for the project to finish loading. Main.xaml opens in the designer and the toolbar shows Debug on cloud. Studio Web saves as you work, so you will see Saved recently beside the project name; there is no save button to press.',
-    'Rename the project so you can find it again: select the project name at the top of the page and add your own name to the end of it.',
+    'Rename the project so you can find it again: select the project name at the top of the page and add **your own name** to the end of it.',
     {
-      text: 'In the middle of the canvas is a stack of activities, the building blocks of the automation. Find Retrieve sample files near the top and set Orchestrator folder path to Shared using the dropdown arrow at the right of the field.',
+      text: 'In the middle of the canvas is a stack of activities, the building blocks of the automation. Find **Retrieve sample files** near the top and set **Orchestrator folder path** to **Shared** using the dropdown arrow at the right of the field.',
       figure: {
         src: duRetrieveImage,
         alt: 'Retrieve sample files activity with the folder path set to Shared',
         caption: 'Retrieve sample files after the change, with Directory holding a single backslash.',
       },
     },
-    'In the same activity, leave Storage bucket name as du_FMS Training_resources and check that Directory contains a single backslash. A wrong value here returns no files and the run does nothing.',
+    'In the same activity, leave Storage bucket name as **du_FMS Training_resources** and check that **Directory** contains a **single backslash**. A wrong value here returns no files and the run does nothing.',
     {
-      text: 'Scroll down to Download sample file, which sits inside the For each sample file loop. Its Orchestrator folder path points at your personal workspace by default, so set it to Shared as well.',
+      text: 'Scroll down to **Download sample file**, which sits inside the For each sample file loop. Its Orchestrator folder path points at your personal workspace by default, so set it to **Shared** as well.',
       figure: {
         src: duDownloadImage,
         alt: 'Download sample file activity inside the loop set to Shared',
@@ -325,7 +325,7 @@ const steps = {
       },
     },
     {
-      text: 'Scroll to Extract Document Data (SF1449). A yellow notice says the activity was updated to a new major version. Select Acknowledge to clear it, otherwise the activity keeps showing an error.',
+      text: 'Scroll to **Extract Document Data (SF1449)**. A yellow notice says the activity was updated to a new major version. Select **Acknowledge** to clear it, otherwise the activity keeps showing an error.',
       figure: {
         src: duAcknowledgeImage,
         alt: 'Extract Document Data activity showing a version notice with an Acknowledge button',
@@ -335,7 +335,7 @@ const steps = {
   ],
   duValidation: [
     {
-      text: 'Just below Extract Document Data is an activity called Validate SF1449 extraction. It is a placeholder with an empty Document Data field, so it cannot run as it stands. Right-click it and choose Disable. Remove works too if you would rather delete it.',
+      text: 'Just below Extract Document Data is an activity called **Validate SF1449 extraction**. It is a placeholder with an empty Document Data field, so it cannot run as it stands. Right-click it and choose **Disable**. **Remove** works too if you would rather delete it.',
       figure: {
         src: duExtractValidateImage,
         alt: 'Extract Document Data configured with the validate activity selected below it',
@@ -343,7 +343,7 @@ const steps = {
       },
     },
     {
-      text: 'Hover in the gap just below Extract Document Data and select the small round plus button that appears. In the search box type create validation task, then choose Create Validation Task with the Document Understanding label.',
+      text: 'Hover in the gap just below Extract Document Data and select the small round **plus button** that appears. In the search box type **create validation task**, then choose **Create Validation Task** with the Document Understanding label.',
       figure: {
         src: duAddTaskImage,
         alt: 'Activity search showing Create Validation Task from Document Understanding',
@@ -355,29 +355,29 @@ const steps = {
       },
     },
     {
-      text: 'In the new activity, fill in Action title. Replace Your Name with your own name so you can find your action later among everyone else in the room.',
+      text: 'In the new activity, fill in **Action title**. Replace Your Name with your own name so you can find your action later among everyone else in the room.',
       copy: { label: 'Action title', value: 'Validation Extraction Results - Your Name' },
     },
     {
-      text: 'Select the Document Data field, choose Variables from the small menu, then expand Extract Document Data (SF1449) and select Document data. The field fills with sF1449DocumentData.',
+      text: 'Select the **Document Data** field, choose **Variables** from the small menu, then expand **Extract Document Data (SF1449)** and select **Document data**. The field fills with **sF1449DocumentData**.',
       figure: {
         src: duDocumentDataImage,
         alt: 'Variable picker resolving Extract Document Data document data',
         caption: 'The mapping resolves to sF1449DocumentData. The title is misspelled in this recording; use the spelling from the box above.',
       },
     },
-    'Add a second activity directly below, the same way as before, and search for assign tasks. Choose Assign Tasks. Leave Assignment criteria on User and Enable multiple assignments switched off. Without this activity your action lands in a shared unassigned pile that the whole room can see.',
+    'Add a second activity directly below, the same way as before, and search for **assign tasks**. Choose **Assign Tasks**. Leave **Assignment criteria** on **User** and **Enable multiple assignments** switched off. Without this activity your action lands in a shared unassigned pile that the whole room can see.',
     {
-      text: 'Select the Task Id field, open the variable picker, and drill through Created document validation task, then ActionData, then Id, then Value.',
+      text: 'Select the **Task Id** field, open the variable picker, and drill through **Created document validation task**, then **ActionData**, then **Id**, then **Value**.',
       figure: {
         src: duTaskIdImage,
         alt: 'Assign Tasks variable picker drilled into ActionData and Id',
         caption: 'The Task Id path, with User name or email waiting directly below it.',
       },
     },
-    'In User name or email, paste the username from your UiPath Labs 3.0 workshop page. It is the long address ending in onmicrosoft.com, the same one you signed in with.',
+    'In **User name or email**, paste the **username** from your UiPath Labs 3.0 workshop page. It is the long address ending in onmicrosoft.com, the same one you signed in with.',
     {
-      text: 'Leave Task assignment type set to Assign. Leave Write extracted data (SF1449) at the bottom exactly as it is; it prints the results into the Output panel when the run finishes.',
+      text: 'Leave **Task assignment type** set to **Assign**. Leave **Write extracted data (SF1449)** at the bottom exactly as it is; it prints the results into the Output panel when the run finishes.',
       figure: {
         src: duConfiguredImage,
         alt: 'Create Validation Task and Assign Tasks both configured',
@@ -386,18 +386,18 @@ const steps = {
     },
   ],
   duRun: [
-    'In the toolbar at the top select Debug on cloud, then Run. The first run takes a moment while the environment starts up, so give it time before assuming something is wrong.',
+    'In the toolbar at the top select **Debug on cloud**, then **Run**. The first run takes a moment while the environment starts up, so give it time before assuming something is wrong.',
     {
-      text: 'Watch the Output panel on the right. Each activity turns green as it succeeds and the loop repeats for all four documents in the bucket without stopping for you.',
+      text: 'Watch the **Output** panel on the right. Each activity turns green as it succeeds and the loop repeats for all four documents in the bucket without stopping for you.',
       figure: {
         src: duStackImage,
         alt: 'Activity stack with Assign Tasks, the disabled activity and Write extracted data',
         caption: 'Nothing in this stack waits for a person, so the run finishes on its own and leaves the actions queued.',
       },
     },
-    'When the run ends, the Output panel header reads Successful and the toolbar returns to normal. The four actions now exist and are waiting for you.',
+    'When the run ends, the Output panel header reads **Successful** and the toolbar returns to normal. The four actions now exist and are waiting for you.',
     {
-      text: 'Open the waffle menu again, expand More, and select Actions. Action Center opens.',
+      text: 'Open the waffle menu again, expand **More**, and select **Actions**. Action Center opens.',
       figure: {
         src: duWaffleActionsImage,
         alt: 'Waffle menu with More expanded and Actions highlighted',
@@ -405,7 +405,7 @@ const steps = {
       },
     },
     {
-      text: 'On the Overview tab, check the Pending Tasks tile. Unassigned should read zero, which is proof that the automation assigned every action to you rather than leaving it for anyone to claim.',
+      text: 'On the **Overview** tab, check the **Pending Tasks** tile. **Unassigned** should read **zero**, which is proof that the automation assigned every action to you rather than leaving it for anyone to claim.',
       figure: {
         src: duOverviewImage,
         alt: 'Action Center overview with pending, completed and unassigned counts',
@@ -413,14 +413,14 @@ const steps = {
       },
     },
     {
-      text: 'Select Inbox, then the Pending tab. Look for four actions carrying the title you set. If older tasks are in the way, sort by creation time so the newest are on top.',
+      text: 'Select **Inbox**, then the **Pending** tab. Look for **four actions** carrying the title you set. If older tasks are in the way, sort by creation time so the newest are on top.',
       figure: {
         src: duInboxImage,
         alt: 'Action Center inbox with queued validation actions and the validation station open',
         caption: 'Four actions created within the last minute, with extracted fields beside the source document.',
       },
     },
-    'Open the first action. The extracted values are listed on the left and the source document is displayed on the right. Compare each value against the document, correct anything the model got wrong, then select Submit.',
+    'Open the first action. The extracted values are listed on the left and the source document is displayed on the right. Compare each value against the document, correct anything the model got wrong, then select **Submit**.',
     'Repeat for the remaining three actions. Once all four are submitted, this track is done and the extracted data has been through a human check.',
   ],
   foiaSetup: [
@@ -801,6 +801,21 @@ type StepItem =
       copy?: { label: string; value: string }
     }
 
+// Step text marks what the reader has to act on with **double asterisks**: the
+// control to click and the exact value to type. Everything else stays quiet so
+// the bold actually means something.
+function withEmphasis(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
+    part.startsWith('**') && part.endsWith('**') ? (
+      <strong className="font-semibold text-foreground" key={index}>
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      part
+    ),
+  )
+}
+
 function Checklist({ items }: { items: StepItem[] }) {
   return (
     <ol className="space-y-4">
@@ -812,7 +827,7 @@ function Checklist({ items }: { items: StepItem[] }) {
               {index + 1}
             </span>
             <div className="min-w-0 flex-1 space-y-3">
-              <p className="pt-0.5 text-sm leading-6 text-muted-foreground">{entry.text}</p>
+              <p className="pt-0.5 text-sm leading-6 text-muted-foreground">{withEmphasis(entry.text)}</p>
               {'copy' in entry && entry.copy ? <CopyBlock label={entry.copy.label} value={entry.copy.value} /> : null}
               {'figure' in entry && entry.figure ? <ScreenshotFigure {...entry.figure} /> : null}
               {'note' in entry && entry.note ? (
@@ -820,7 +835,7 @@ function Checklist({ items }: { items: StepItem[] }) {
                   <Circle className="h-4 w-4 fill-primary text-primary" />
                   <AlertTitle>{entry.note.title}</AlertTitle>
                   <AlertDescription className="mt-1 leading-6">
-                    {entry.note.body}
+                    {withEmphasis(entry.note.body)}
                     {entry.note.link ? (
                       <span className="mt-2 block">
                         <a
