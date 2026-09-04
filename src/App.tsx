@@ -425,18 +425,18 @@ const steps = {
   ],
   foiaSetup: [
     'Open your workshop registration page and keep it available. You will need the credentials under Your Workshop Account, and later you will need a second, personal email address that can actually receive mail.',
-    'Open Studio from the waffle menu, then select the Templates tab at the top.',
+    'Open **Studio** from the waffle menu, then select the **Templates** tab at the top.',
     {
-      text: 'Search for agentic foia. One result appears: Agentic FOIA Redaction Workshop - Template v2, published by uipathlabsworkshop. Leave Project type set to All.',
+      text: 'Search for **agentic foia**. One result appears: **Agentic FOIA Redaction Workshop - Template v2**, published by uipathlabsworkshop. Leave **Project type** set to **All**.',
       figure: {
         src: foiaTemplateImage,
         alt: 'Studio Templates tab with a search for agentic foia returning one solution template',
         caption: 'One result. If you see none, clear the search box and retype it - the filter is exact.',
       },
     },
-    'Select the three-dot menu on the template card and choose New solution from template. Studio copies the whole solution into your own workspace and opens it. This takes a few seconds.',
+    'Select the **three-dot menu** on the template card and choose **New solution from template**. Studio copies the whole solution into your own workspace and opens it. This takes a few seconds.',
     {
-      text: 'Rename your copy so you can find it again. Select the solution name at the very top of the Explorer panel on the left, then type a name that includes your own initials or name.',
+      text: 'Rename your copy so you can find it again. Select the **solution name** at the very top of the Explorer panel on the left, then type **a name that includes your own initials or name**.',
       figure: {
         src: foiaRenameImage,
         alt: 'The solution open in Studio with the solution name selected in the Explorer panel',
@@ -458,7 +458,7 @@ const steps = {
   ],
   foiaRouting: [
     {
-      text: 'Open Data manager using the suitcase icon in the narrow strip of icons on the far left. Expand Inputs, then Start event, then select recipientEmails.',
+      text: 'Open **Data manager** using the **suitcase icon** in the narrow strip of icons on the far left. Expand **Inputs**, then **Start event**, then select **recipientEmails**.',
       figure: {
         src: foiaRecipientsImage,
         alt: 'Data manager with recipientEmails selected showing its default array value',
@@ -470,14 +470,14 @@ const steps = {
       copy: { label: 'recipientEmails format', value: recipientEmailsExample },
     },
     {
-      text: 'Replace the placeholder your.email@here.com with a real address you can open right now, and keep the existing lewis.bell@uipath.com entry as a second element.',
+      text: 'Replace the placeholder **your.email@here.com** with **a real address you can open right now**, and keep the existing lewis.bell@uipath.com entry as a second element.',
       note: {
         title: 'Replace, never delete',
         body: 'If you empty this array the workflow sends no email and raises no error, so the run looks like a success and nothing arrives. Also note that a bare name as its own element will fail - every element must be an address.',
       },
     },
     {
-      text: 'Scroll to the top of Data manager and select the plus icon beside Variables. A variable called property1 appears. Leave Scope set to Process and Type set to Text (String).',
+      text: 'Scroll to the top of Data manager and select the **plus icon** beside **Variables**. A variable called **property1** appears. Leave **Scope** set to **Process** and **Type** set to **Text (String)**.',
       figure: {
         src: foiaAddVarImage,
         alt: 'Data manager with a newly added variable named property1 at Process scope',
@@ -485,7 +485,7 @@ const steps = {
       },
     },
     {
-      text: 'Rename property1 to reviewAssignee using the pencil icon, then set Default value to your provisioned tenant account - the long username from your workshop page, not your personal address. Spelling matters: you will search for this name in the next step.',
+      text: 'Rename **property1** to **reviewAssignee** using the **pencil icon**, then set **Default value** to **your provisioned tenant account** - the long username from your workshop page, not your personal address. Spelling matters: you will search for this name in the next step.',
       figure: {
         src: foiaAssigneeVarImage,
         alt: 'The variable renamed to reviewAssignee with the tenant account as its default value',
@@ -493,7 +493,7 @@ const steps = {
       },
     },
     {
-      text: 'Open Process.bpmn and select the node named FOIA Sensitive Data Review. In the Properties panel on the right, expand Assignments. Assignment Criteria is already set to User. The Assignee field below it is empty - that is the first gap.',
+      text: 'Open **Process.bpmn** and select the node named **FOIA Sensitive Data Review**. In the Properties panel on the right, expand **Assignments**. Assignment Criteria is already set to User. The Assignee field below it is empty - that is the first gap.',
       figure: {
         src: foiaReviewNodeImage,
         alt: 'The FOIA Sensitive Data Review user task selected with an empty Assignee field',
@@ -501,7 +501,7 @@ const steps = {
       },
     },
     {
-      text: 'Select the small icon at the right edge of the Assignee field to open the Use menu, then choose Variables. Do not type the account name directly into the field.',
+      text: 'Select the small icon at the right edge of the **Assignee** field to open the **Use** menu, then choose **Variables**. Do not type the account name directly into the field.',
       figure: {
         src: foiaUseVariablesImage,
         alt: 'The Use menu open on the Assignee field showing Assignee, Variables, and expression editors',
@@ -509,7 +509,7 @@ const steps = {
       },
     },
     {
-      text: 'Type reviewassignee in the search box and select reviewAssignee (string) from the results.',
+      text: 'Type **reviewassignee** in the search box and select **reviewAssignee (string)** from the results.',
       figure: {
         src: foiaPickVariableImage,
         alt: 'Variable picker filtered to reviewAssignee showing the match under Process_1',
@@ -517,7 +517,7 @@ const steps = {
       },
     },
     {
-      text: 'Confirm Assignee now shows a reviewAssignee chip rather than empty placeholder text.',
+      text: 'Confirm **Assignee** now shows a **reviewAssignee** chip rather than empty placeholder text.',
       figure: {
         src: foiaAssigneeBoundImage,
         alt: 'The Assignee field holding a reviewAssignee variable chip',
@@ -525,7 +525,7 @@ const steps = {
       },
     },
     {
-      text: 'Now repeat exactly the same binding on the second review node. Select FOIA Final Redaction Review, further right in the process, and set its Assignee to reviewAssignee the same way.',
+      text: 'Now repeat exactly the same binding on the second review node. Select **FOIA Final Redaction Review**, further right in the process, and set its **Assignee** to **reviewAssignee** the same way.',
       figure: {
         src: foiaFinalBoundImage,
         alt: 'The FOIA Final Redaction Review user task with reviewAssignee bound to Assignee',
@@ -537,7 +537,7 @@ const steps = {
       },
     },
     {
-      text: 'Confirm both review nodes show a reviewAssignee chip before moving on.',
+      text: 'Confirm both review nodes show a **reviewAssignee** chip before moving on.',
       note: {
         title: 'Check both nodes before moving on',
         body: 'There is no error message for a missing assignee and no retry budget later in the workshop. Select each review node once more and confirm you see a reviewAssignee chip on both, and two entries under recipientEmails.',
@@ -546,7 +546,7 @@ const steps = {
   ],
   foiaResources: [
     {
-      text: 'Select the arrow beside the Debug button in the toolbar and choose the option that opens the debug configuration. The Debug configuration dialog opens on the Solution resources tab. F5 also starts a debug run, which is quicker once you have been round this loop a few times.',
+      text: 'Select the **arrow beside the Debug button** in the toolbar and choose the option that opens the **debug configuration**. The Debug configuration dialog opens on the Solution resources tab. F5 also starts a debug run, which is quicker once you have been round this loop a few times.',
       figure: {
         src: foiaDebugButtonImage,
         alt: 'The Debug button and its dropdown arrow in the Studio toolbar',
@@ -554,7 +554,7 @@ const steps = {
       },
     },
     {
-      text: 'Every row under Resources in solution reads Will be deployed in Debug folder. Select each field in turn and pick the matching resource under Shared. The dropdowns list only real, available resources, so there is exactly one sensible choice per row.',
+      text: 'Every row under Resources in solution reads Will be deployed in Debug folder. Select each field in turn and pick the matching resource under **Shared**. The dropdowns list only real, available resources, so there is exactly one sensible choice per row.',
       figure: {
         src: foiaResourcesMapImage,
         alt: 'The Solution resources tab with an app dropdown open showing Shared and the matching app',
@@ -574,7 +574,7 @@ const steps = {
       },
     },
     {
-      text: 'Switch to the Entrypoint arguments tab. Set documentSearchTerm to geothermal. Leave supplementalSensitiveTerms and additionalInstructions empty, and confirm recipientEmails carries the addresses you set in the previous step.',
+      text: 'Switch to the **Entrypoint arguments** tab. Set **documentSearchTerm** to **geothermal**. Leave supplementalSensitiveTerms and additionalInstructions empty, and confirm recipientEmails carries the addresses you set in the previous step.',
       figure: {
         src: foiaEntrypointImage,
         alt: 'The Entrypoint arguments tab with documentSearchTerm set to geothermal',
@@ -589,7 +589,7 @@ const steps = {
   ],
   foiaRunOne: [
     {
-      text: 'Select Save and Debug. The process starts and the Execution trail at the bottom fills in as each step completes. Retrieval and analysis take a minute or two.',
+      text: 'Select **Save and Debug**. The process starts and the Execution trail at the bottom fills in as each step completes. Retrieval and analysis take a minute or two.',
       figure: {
         src: foiaFirstRunImage,
         alt: 'The process running in debug with a green execution trail and the review task highlighted',
@@ -599,7 +599,7 @@ const steps = {
     {
       text: 'Give yourself room to watch it. The page-scroll icon on the right of the trail closes the logs, and on the left the project explorer (folder icon) and Data manager (suitcase icon) each collapse when you select them again. You can also drag the top edge of the Execution trail upwards to make it taller.',
     },
-    'When the trail reaches FOIA Sensitive Data Review it stops. In the Details panel on the right, select Open app task. Your review opens in a new tab.',
+    'When the trail reaches FOIA Sensitive Data Review it stops. In the Details panel on the right, select **Open app task**. Your review opens in a new tab.',
     {
       text: 'Read the amber banner at the top: Guidance unavailable - hybrid review used exact supplemental matches only. Human review is required. The agent found three passages worth redacting but has no policy source to justify any of them.',
       figure: {
@@ -613,7 +613,7 @@ const steps = {
       },
     },
     {
-      text: 'The footer says three findings need authority review, and Confirm redaction is disabled. For each finding, open Add authority and pick a statutory exemption from the fourteen-item list. You get no rationale and no suggestion; the choice is entirely yours.',
+      text: 'The footer says three findings need authority review, and Confirm redaction is disabled. For each finding, open **Add authority** and pick a statutory exemption from the fourteen-item list. You get no rationale and no suggestion; the choice is entirely yours.',
       figure: {
         src: foiaAuthorityImage,
         alt: 'The Add authority dropdown listing fourteen FOIA statutory exemptions',
@@ -625,7 +625,7 @@ const steps = {
       },
     },
     {
-      text: 'Once every finding has an authority, the footer changes to three findings will be sent to redaction and Confirm redaction turns active. Select it.',
+      text: 'Once every finding has an authority, the footer changes to three findings will be sent to redaction and **Confirm redaction** turns active. Select it.',
       figure: {
         src: foiaConfirmImage,
         alt: 'The review task with all findings labelled and Confirm redaction enabled',
@@ -645,7 +645,7 @@ const steps = {
       },
     },
     {
-      text: 'The final review shows the redacted PDF with black bars carrying the exemption codes you chose. Check the bars land on the right passages, then select Approve final document.',
+      text: 'The final review shows the redacted PDF with black bars carrying the exemption codes you chose. Check the bars land on the right passages, then select **Approve final document**.',
       figure: {
         src: foiaFinalRunOneImage,
         alt: 'The final redaction review showing the redacted PDF with exemption code bars',
@@ -663,7 +663,7 @@ const steps = {
   ],
   foiaContext: [
     {
-      text: 'In Explorer, expand PII Agent and select Definition. The agent opens with its model, system prompt, and user prompt.',
+      text: 'In Explorer, expand **PII Agent** and select **Definition**. The agent opens with its model, system prompt, and user prompt.',
       figure: {
         src: foiaAgentDefImage,
         alt: 'The PII Agent definition showing the model, system prompt and user prompt',
@@ -675,7 +675,7 @@ const steps = {
       },
     },
     {
-      text: 'Switch to the Canvas view using the Canvas and Form toggle. Below the agent card is a Context connector with a plus button. Select the plus, then choose Context Grounding Indexes.',
+      text: 'Switch to the **Canvas** view using the Canvas and Form toggle. Below the agent card is a Context connector with a **plus button**. Select the **plus**, then choose **Context Grounding Indexes**.',
       figure: {
         src: foiaNewContextImage,
         alt: 'The agent canvas with a new context node and a panel offering Context Grounding Indexes or Data Fabric Entities',
@@ -683,7 +683,7 @@ const steps = {
       },
     },
     {
-      text: 'Under Available resources, expand Shared and select doj-foia-redaction-guidance, described as Department of Justice exemption code FOIA policy documentation.',
+      text: 'Under Available resources, expand **Shared** and select **doj-foia-redaction-guidance**, described as Department of Justice exemption code FOIA policy documentation.',
       figure: {
         src: foiaPickIndexImage,
         alt: 'The index picker listing doj-foia-redaction-guidance under Shared',
@@ -705,7 +705,7 @@ const steps = {
   ],
   foiaClassify: [
     {
-      text: 'Switch back to the Form view of the PII Agent, then select Open Autopilot on the right-hand icon strip.',
+      text: 'Switch back to the **Form** view of the PII Agent, then select **Open Autopilot** on the right-hand icon strip.',
       figure: {
         src: foiaOpenAutopilotImage,
         alt: 'The PII Agent form view with the Open Autopilot tooltip showing',
@@ -713,7 +713,7 @@ const steps = {
       },
     },
     {
-      text: 'Paste the request below into Autopilot and send it. You are asking for one new section, not a rewrite.',
+      text: 'Paste the request below into **Autopilot** and send it. You are asking for one new section, not a rewrite.',
       figure: {
         src: foiaAutopilotAskImage,
         alt: 'The Autopilot panel with the finding classification request submitted and generating a response',
@@ -752,7 +752,7 @@ const steps = {
   ],
   foiaRunTwo: [
     {
-      text: 'Open the debug configuration again. Map the new index row to Shared, leave every other row as you set it in step 3, and confirm documentSearchTerm is still geothermal. Then select Save and Debug.',
+      text: 'Open the **debug configuration** again. Map the **new index row** to **Shared**, leave every other row as you set it in step 3, and confirm **documentSearchTerm** is still **geothermal**. Then select Save and Debug.',
       note: {
         title: 'Same document, second time',
         body: 'You changed two things since run 1: the agent now has a policy source, and it now has your category vocabulary. Everything else, including the document, is identical, so every difference you see comes from those two changes.',
@@ -767,7 +767,7 @@ const steps = {
       },
     },
     {
-      text: 'Confirm redaction is active immediately. There is no authority to hand-pick, no fourteen-item dropdown, and no amber banner. Select Confirm redaction.',
+      text: '**Confirm redaction** is active immediately. There is no authority to hand-pick, no fourteen-item dropdown, and no amber banner. Select **Confirm redaction**.',
       note: {
         title: 'Where the two halves meet',
         body: 'The vocabulary you authored in step 6 maps one-to-one onto the exemption families the grounded agent proposes here. All three findings on this document demonstrate it.',
